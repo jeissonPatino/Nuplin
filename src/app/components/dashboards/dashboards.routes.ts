@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 export const admin: Routes = [
- {path:'dashboards',children:[ {
-  path: 'sales',
+ {path:'nuplinTV',children:[ {
+  path: 'inicio',
   loadComponent: () =>
     import('./sales/sales.component').then((m) => m.SalesComponent),
 },

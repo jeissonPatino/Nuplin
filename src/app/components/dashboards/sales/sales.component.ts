@@ -1,17 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Renderer2 } from '@angular/core';
 import {FlatpickrDefaults  } from 'angularx-flatpickr';
-import { SpkFlatpickrComponent } from '../../../../@spk/spk-flatpickr/spk-flatpickr.component';
-import { SpkSalesCardsComponent } from '../../../../@spk/reusable-dashboard/spk-sales-cards/spk-sales-cards.component';
-import { SpkDropdownsComponent } from '../../../../@spk/reusable-ui-elements/spk-dropdowns/spk-dropdowns.component';
-import { SpkApexchartsComponent } from '../../../../@spk/spk-apexcharts/apexcharts.component';
-import { SpkReusableTablesComponent } from '../../../../@spk/spk-reusable-tables/spk-reusable-tables.component';
+
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-sales',
   standalone: true,
-  imports: [SpkFlatpickrComponent,CommonModule,SpkSalesCardsComponent,SpkDropdownsComponent,SpkApexchartsComponent,SpkReusableTablesComponent,FormsModule],
+  imports: [FormsModule],
   providers:[FlatpickrDefaults],
   templateUrl: './sales.component.html',
   styleUrl: './sales.component.scss',

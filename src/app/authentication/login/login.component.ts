@@ -64,8 +64,8 @@ ngOnDestroy(): void {
 }
 ngOnInit(): void {
   this.loginForm = this.formBuilder.group({
-    username: ['spruko@admin.com', [Validators.required, Validators.email]],
-    password: ['sprukoadmin', Validators.required],
+    username: ['example@admin.com', [Validators.required, Validators.email]],
+    password: ['exampleadmin', Validators.required],
   });
 // Initialize Firebase services here
 this.firestoreModule = this.firebaseService.getFirestore();
@@ -75,8 +75,8 @@ this.authModule = this.firebaseService.getAuth();
 
 // firebase
 
-email = 'spruko@admin.com';
-password = 'sprukoadmin';
+email = 'example@admin.com';
+password = 'exampleadmin';
 errorMessage = ''; // validation _error handle
 _error: { name: string; message: string } = { name: '', message: '' }; // for firbase _error handle
 
@@ -86,15 +86,15 @@ clearErrorMessage() {
 }
 
 login() {
-  // this.disabled = "btn-loading"
+  this.disabled = "btn-loading"
   this.clearErrorMessage();
   if (this.validateForm(this.email, this.password)) {
     this.authservice
       .loginWithEmail(this.email, this.password)
       .then(() => {
-        this.router.navigate(['/dashboards/sales']);
+        this.router.navigate(['/nuplinTV/inicio']);
         console.clear();
-        this.toastr.success('login successful','Xintra', {
+        this.toastr.success('Hola','NuplinTv', {
           timeOut: 3000,
           positionClass: 'toast-top-right',
         });
@@ -106,7 +106,7 @@ login() {
    
   }
   else {
-    this.toastr.error('Invalid details','Xintra', {
+    this.toastr.error('Uppps','NuplinTv', {
       timeOut: 3000,
       positionClass: 'toast-top-right',
     });
@@ -145,16 +145,16 @@ get form() {
 Submit() {
   console.log(this.loginForm)
   if (
-    this.loginForm.controls['username'].value === 'spruko@admin.com' &&
-    this.loginForm.controls['password'].value === 'sprukoadmin'
+    this.loginForm.controls['username'].value === 'example@admin.com' &&
+    this.loginForm.controls['password'].value === 'exampleadmin'
   ) {
-    this.router.navigate(['/dashboards/sales']);
-    this.toastr.success('login successful','Xintra', {
+    this.router.navigate(['/nuplinTV/inicio']);
+    this.toastr.success('login successful','NuplinTv', {
       timeOut: 3000,
       positionClass: 'toast-top-right',
     });
   } else {
-    this.toastr.error('Invalid details','Xintra', {
+    this.toastr.error('Invalid details','NuplinTv', {
       timeOut: 3000,
       positionClass: 'toast-top-right',
     });

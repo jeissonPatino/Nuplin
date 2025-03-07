@@ -66,15 +66,12 @@ export class AuthService {
   }
 
   loginWithEmail(email: string, password: string) {
-    return this.afu
-      .signInWithEmailAndPassword(email, password)
-      .then((user: any) => {
-        this.authState = user;
-      })
-      .catch((_error: any) => {
-        console.log(_error);
-        throw _error;
-      });
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        console.log("Simulación de login exitosa");
+        resolve("success"); // Devuelve "success" sin llamar a Firebase
+      }, 500);
+    });
   }
 
   singout(): void {

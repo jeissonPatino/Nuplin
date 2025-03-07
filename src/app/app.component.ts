@@ -12,7 +12,7 @@ import { SharedModule } from './shared/shared.module';
 })
 
 export class AppComponent {
-  title = 'Xintra';
+  title = 'NuplinTv';
   constructor(private appState : AppStateService,private router:Router){
     this.appState.updateState();
   }
