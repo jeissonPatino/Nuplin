@@ -7,18 +7,20 @@
   <!-- Start::main-sidebar-header -->
   <div class="main-sidebar-header">
     <a [routerLink]="['/nuplinTV/inicio']" class="header-logo">
-      <img src="./assets/images/brand-logos/desktop-logo.png" alt="logo" class="desktop-logo"> 
-      <img src="./assets/images/brand-logos/toggle-dark.png" alt="logo" class="toggle-dark"> 
-      <img src="./assets/images/brand-logos/desktop-dark.png" alt="logo" class="desktop-dark"> 
-      <img src="./assets/images/brand-logos/toggle-logo.png" alt="logo" class="toggle-logo"> 
-      <img src="./assets/images/brand-logos/toggle-white.png" alt="logo" class="toggle-white"> 
-      <img src="./assets/images/brand-logos/desktop-white.png" alt="logo" class="desktop-white"> 
+      <img src="./assets/images/company-logos/1 NUPLIN-NEGATIVO-PARA-CLARO-109x31.png" alt="logo" class="desktop-logo"> 
+      <img src="./assets/images/company-logos/3 NUPLIN-NEGATIVO-PARA-CLARO-29x29.png" alt="logo" class="toggle-dark"> 
+      <img src="./assets/images/company-logos/2 NUPLIN-POSITIVO PARA OSCURO-109x31.png" alt="logo" class="desktop-dark"> 
+
+
+      <img src="./assets/images/company-logos/4 NUPLIN-POSITIVO-PARA-OSCURO-29x29.png" alt="logo" class="toggle-logo"> 
+      <img src="./assets/images/company-logos/4 NUPLIN-POSITIVO-PARA-OSCURO-29x29.png" alt="logo" class="toggle-white"> 
+      <img src="./assets/images/company-logos/2 NUPLIN-POSITIVO PARA OSCURO-109x31.png" alt="logo" class="desktop-white"> 
     </a>
   </div>
   <!-- End::main-sidebar-header -->
 
   <!-- Start::main-sidebar -->
-  <overlay-scrollbars [defer] class="main-sidebar" id="sidebar-scroll">
+  <overlay-scrollbars [defer] class="main-sidebar" id="sidebar-scroll" >
     <!-- Start::nav -->
     <nav class="main-menu-container nav nav-pills flex-column sub-open">
         <div class="slide-left" id="slide-left" (click)="leftArrowFn()">
@@ -26,7 +28,7 @@
         </div>
         <ul class="main-menu" [ngStyle]="{ display: 'block' }">
           @for (menuItem of menuItems; track menuItem) {
-          <li
+          <li 
             class="slide"
             #activeMenuItems
             [ngClass]="{

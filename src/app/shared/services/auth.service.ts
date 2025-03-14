@@ -1,144 +1,53 @@
-import { Injectable,NgZone } from '@angular/core';
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Router } from '@angular/router';
-import { AngularFirestoreDocument } from '@angular/fire/compat/firestore';
+import { Injectable } from '@angular/core';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { User } from '../models/user.model';
 
-export interface User {
-  uid: string;
-  email: string;
-  displayName: string;
-  photoURL: string;
-  emailVerified: boolean;
-}
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  authState: any;
-  afAuth: any;
-  afs: any;
-  public showLoader:boolean=false;
+  private currentUser: User | null = null;
 
-  constructor(private afu: AngularFireAuth, private router: Router,public ngZone: NgZone) {
-    this.afu.authState.subscribe((auth: any) => {
-      this.authState = auth;
-    });
+  constructor(private router: Router) {}
 
-  }
+  //Borrar despues de obtener los datos del usuario desde el backend
+  private users: User[] = [
+    { id: 1, displayName: 'Admin Pruebas', email: 'admin@test.com', role: 'Admin', password: '0fa76955abfa9dafd83facca8343a92aa09497f98101086611b0bfa95dbc0dcc661d62e9568a5a032ba81960f3e55d4a', token: 'fake-jwt-admin' },
+    { id: 2, displayName: 'cliente Pruebas', email: 'cliente@test.com', role: 'Cliente', password: '0a989ebc4a77b56a6e2bb7b19d995d185ce44090c13e2984b7ecc6d446d4b61ea9991b76a4c2f04b1b4d244841449454', token: 'fake-jwt-cliente' }
+  ];
 
-  // all firebase getdata functions
-
-  get isUserAnonymousLoggedIn(): boolean {
-    return this.authState !== null ? this.authState.isAnonymous : false;
-  }
-
-  get currentUserId(): string {
-    return this.authState !== null ? this.authState.uid : '';
-  }
-
-  get currentUserName(): string {
-    return this.authState['email'];
-  }
-
-  get currentUser(): any {
-    return this.authState !== null ? this.authState : null;
-  }
-
-  get isUserEmailLoggedIn(): boolean {
-    if (this.authState !== null && !this.isUserAnonymousLoggedIn) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  registerWithEmail(email: string, password: string) {
-    return this.afu
-      .createUserWithEmailAndPassword(email, password)
-      .then((user: any) => {
-        this.authState = user;
-      })
-      .catch((_error: any) => {
-        console.log(_error);
-        throw _error;
-      });
-  }
-
-  loginWithEmail(email: string, password: string) {
+  loginWithEmail(email: string, hashedPassword: string, token: string): Promise<boolean> {
     return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log("Simulación de login exitosa");
-        resolve("success"); // Devuelve "success" sin llamar a Firebase
-      }, 500);
-    });
-  }
-
-  singout(): void {
-    this.afu.signOut();
-    this.router.navigate(['/login']);
-  }
+      const user = this.users.find(u => u.email === email && u.password === hashedPassword);
   
-
-    // Sign up with email/password
-    SignUp(email:any, password:any) {
-      return this.afAuth.createUserWithEmailAndPassword(email, password)
-        .then((result:any) => {
-          /* Call the SendVerificaitonMail() function when new user sign
-          up and returns promise */
-          this.SendVerificationMail();
-          this.SetUserData(result.user);
-        }).catch((error:any) => {
-          window.alert(error.message)
-        })
-    }
-
-    // main verification function
-    SendVerificationMail() {
-      return this.afAuth.currentUser.then((u:any) => u.sendEmailVerification()).then(() => {
-          this.router.navigate(['/sales']);
-        })
-    }
-      // Set user
-  SetUserData(user:any) {
-    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
-    const userData: User = {
-      email: user.email,
-      displayName: user.displayName,
-      uid: user.uid,
-      photoURL: user.photoURL || 'src/favicon.ico',
-      emailVerified: user.emailVerified
-    };
-    userRef.delete().then(function () {})
-          .catch(function (error:any) {});
-    return userRef.set(userData, {
-      merge: true
+      if (user) {
+        this.currentUser = user;
+        sessionStorage.setItem('user', JSON.stringify(user));
+        resolve(true);
+      } else {
+        resolve(false);
+      }
     });
   }
- // sign in function
- SignIn(email:any, password:any) {
-  return this.afAuth.signInWithEmailAndPassword(email, password)
-    .then((result:any) => {
-      if (result.user.emailVerified !== true) {
-        this.SetUserData(result.user);
-        this.SendVerificationMail();
-        this.showLoader = true;
-      } else {
-        this.showLoader = false;
-        this.ngZone.run(() => {
-          this.router.navigate(['/auth/login']);
-        });
-      }
-    }).catch((error:any) => {
-      throw error;
-    })
-}
-ForgotPassword(passwordResetEmail:any) {
-  return this.afAuth.sendPasswordResetEmail(passwordResetEmail)
-    .then(() => {
-      window.alert('Password reset email sent, check your inbox.');
-    }).catch((error:any) => {
-      window.alert(error);
+
+  logout(): void {
+    this.currentUser = null;
+    sessionStorage.removeItem('user');
+    localStorage.removeItem('user'); 
+    this.router.navigate(['/auth/login']).then(() => {
+      window.location.reload(); 
     });
-}
+  }
+
+  getUser(): User | null {
+    return this.currentUser || JSON.parse(sessionStorage.getItem('user') || 'null');
+  }
+
+  isAuthenticated(): boolean {
+    return this.getUser() !== null;
+  }
+
+  getUserRole(): string | null {
+    return this.getUser()?.role || '';
+  }
 }

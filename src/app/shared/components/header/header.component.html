@@ -44,26 +44,7 @@
             <!-- End::header-element -->
             <!-- Start::header-element -->
             <!-- light and dark theme -->
-            <li class="header-element header-theme-mode hidden !items-center sm:block md:!px-[0.5rem] px-2">
-                <a aria-label="anchor" (click)="updateTheme('dark')"
-                    class="hs-dark-mode-active:hidden flex hs-dark-mode group flex-shrink-0 justify-center items-center gap-2  rounded-full font-medium transition-all text-xs dark:bg-bgdark dark:hover:bg-black/20 text-textmuted dark:text-textmuted/50 dark:hover:text-white dark:focus:ring-white/10 dark:focus:ring-offset-white/10"
-                    href="javascript:void(0);" data-hs-theme-click-value="dark">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 header-link-icon" fill="none"
-                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-                    </svg>
-                </a>
-                <a aria-label="anchor"(click)="updateTheme('light')"
-                    class="hs-dark-mode-active:flex hidden hs-dark-mode group flex-shrink-0 justify-center items-center gap-2  rounded-full font-medium text-defaulttextcolor  transition-all text-xs dark:bg-bodybg dark:bg-bgdark dark:hover:bg-black/20  dark:hover:text-white dark:focus:ring-white/10 dark:focus:ring-offset-white/10"
-                    href="javascript:void(0);" data-hs-theme-click-value="light">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 header-link-icon" fill="none"
-                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-                    </svg>
-                </a>
-            </li>
+            
             <!-- End light and dark theme -->
 
             <!-- End::header-element -->
@@ -113,12 +94,12 @@
                         <div
                             class="ti-dropdown-item text-center border-b border-defaultborder dark:border-defaultborder/10 block">
                             <span>
-                                Usuario en Sesión
+                                {{dataUSer.displayName}}
                             </span>
-                            <span class="block text-xs text-textmuted dark:text-textmuted/50">Rol o Perfil </span>
+                            <span class="block text-xs text-textmuted dark:text-textmuted/50">{{dataUSer.role}}</span>
                         </div>
                     </li>
-                    <li><a class="ti-dropdown-item flex items-center" routerLink="/auth/login"><i
+                    <li><a class="ti-dropdown-item flex items-center" (click)="logout()"><i
                                 class="fe fe-lock p-1 rounded-full bg-primary/10 text-primary ut me-2 text-[1rem]"></i>Cerrar
                             Sesión</a></li>
                 </ul>

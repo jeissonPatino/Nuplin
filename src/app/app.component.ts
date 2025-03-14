@@ -13,11 +13,12 @@ import { SharedModule } from './shared/shared.module';
 
 export class AppComponent {
   title = 'NuplinTv';
-  constructor(private appState : AppStateService,private router:Router){
+  constructor(private appState : AppStateService,private router:Router, private appStateService: AppStateService,){
     this.appState.updateState();
   }
 
   ngOnInit() {
+    this.updateTheme();
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationEnd) {
         setTimeout(() => {
@@ -27,4 +28,35 @@ export class AppComponent {
       }
     });
   }
+
+  updateTheme() {
+    
+    let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    this.appStateService.updateState({ theme, menuColor: theme, headerColor: theme });
+    if (theme == 'light') {
+      this.appStateService.updateState({ theme, themeBackground: '', headerColor: 'light', menuColor: 'dark' });
+      let html = document.querySelector('html');
+      html?.style.removeProperty('--primary-rgb');
+      html?.style.removeProperty('--body-bg');
+      html?.style.removeProperty('--dark-bg');
+      html?.style.removeProperty('--light');
+      html?.style.removeProperty('--input-border');
+      html?.setAttribute('data-toggled', 'close');
+      html?.setAttribute('data-toggled', window.innerWidth <= 992 ? 'close' : '');
+
+    }
+    if (theme == 'dark') {
+      this.appStateService.updateState({ theme, themeBackground: '', headerColor: 'dark', menuColor: 'dark' });
+      let html = document.querySelector('html');
+      html?.style.removeProperty('--primary-rgb');
+      html?.style.removeProperty('--body-bg');
+      html?.style.removeProperty('--dark-bg');
+      html?.style.removeProperty('--light');
+      html?.style.removeProperty('--input-border');
+      html?.setAttribute('data-toggled', 'close');
+      html?.setAttribute('data-toggled', window.innerWidth <= 992 ? 'close' : '');
+    }
+  }
+
+
 }

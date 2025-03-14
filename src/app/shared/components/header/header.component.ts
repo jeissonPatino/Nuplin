@@ -2,8 +2,8 @@ import { Component, ElementRef, HostListener, Renderer2 } from '@angular/core';
 import { Menu, NavService } from '../../services/nav.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { AppStateService } from '../../services/app-state.service';
-import { SwitcherComponent } from '../switcher/switcher.component';
 import { filter } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
 interface Item {
   id: number;
   name: string;
@@ -25,7 +25,7 @@ export class HeaderComponent {
   collapse: any;
   closeResult = '';
   themeType: string | undefined;
-
+  dataUSer?: any = null;
   selectedItem: string  | null ='selectedItem'
   isOpen: boolean = false;
   constructor(
@@ -33,7 +33,8 @@ export class HeaderComponent {
     public navServices: NavService,
     private elementRef: ElementRef,
     public renderer: Renderer2,
-    private router: Router, private activatedRoute: ActivatedRoute
+    private router: Router, private activatedRoute: ActivatedRoute,
+    public autService: AuthService,
   ) {this.localStorageBackUp()}
 
   toggleDropdown() {
@@ -169,7 +170,9 @@ export class HeaderComponent {
       );
     }
   }
-  updateTheme(theme: string) {
+  updateTheme() {
+    
+    let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     this.appStateService.updateState({ theme, menuColor: theme, headerColor: theme });
     if (theme == 'light') {
       this.appStateService.updateState({ theme, themeBackground: '', headerColor: 'light', menuColor: 'dark' });
@@ -248,6 +251,8 @@ export class HeaderComponent {
   public SearchResultEmpty: boolean = false;
 
   ngOnInit(): void {
+    this.dataUSer = this.autService.getUser();
+    this.updateTheme();
     const storedSelectedItem = localStorage.getItem('selectedItem');
     // this.updateSelectedItem();
   // If there's no selected item stored, set a default one
@@ -294,7 +299,9 @@ export class HeaderComponent {
           ?.setAttribute('data-toggled', 'icon-text-close');
       }
     });
-
+    if (windowObject) {
+      window.removeEventListener('resize', windowObject);
+    }
   
   }
   Search(searchText: string) {
@@ -383,4 +390,11 @@ export class HeaderComponent {
   toggleFullscreen() {
     this.isFullscreen = !this.isFullscreen;
   }
+
+  logout(){
+    this.autService.logout();
+  }
+
+
+
 }

@@ -4,11 +4,13 @@ import {
   ElementRef,
   Renderer2,
   HostListener,
+  ChangeDetectorRef 
 } from '@angular/core';
 import { Menu, NavService } from '../../services/nav.service';
 import { Subscription, fromEvent } from 'rxjs';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-sidebar',
   standalone:false,
@@ -18,6 +20,7 @@ import { NavigationEnd, Router } from '@angular/router';
 export class SidebarComponent {
   eventTriggered: boolean = false;
   screenWidth!: number;
+  userRole: string = '';
   public localdata = localStorage;
   public windowSubscribe$!: Subscription;
   options = { autoHide: false, scrollbarMinSize: 100 };
@@ -28,6 +31,8 @@ export class SidebarComponent {
     public router: Router,
     public renderer: Renderer2,
     private sanitizer: DomSanitizer,
+    private authService: AuthService,
+    private cdRef: ChangeDetectorRef,
   ) { }
   
   clearNavDropdown() {
@@ -63,8 +68,19 @@ export class SidebarComponent {
   };
 
     this.menuitemsSubscribe$ = this.navServices.items.subscribe((items) => {
-      this.menuItems = items;
-    });  
+      this.userRole = this.authService.getUserRole() ?? ''; 
+      if (!this.userRole) return;
+      this.menuItems = items
+        .filter(item => this.hasPermission(item, this.userRole!))
+        .map(item => ({
+          ...item,
+            children: item.children 
+            ? item.children.filter(child => this.hasPermission(child, this.userRole!)) 
+            : []
+        }));
+    });
+
+    
 
     this.setNavActive(null, this.router.url);
     this.router.events.subscribe((event) => {
@@ -84,6 +100,13 @@ export class SidebarComponent {
 
     if (document.querySelector('html')?.getAttribute('data-nav-layout') == 'horizontal' && window.innerWidth >= 992) { this.clearNavDropdown(); }
   }
+
+  private hasPermission(menuItem: Menu, userRole: string): boolean {
+    if (!menuItem.rol) return true; 
+    return !menuItem.rol || menuItem.rol.includes(userRole);
+  }
+
+
   // Start of Set menu Active event
   setNavActive(event:any, currentPath: string, menuData = this.menuItems) {
     if(event){

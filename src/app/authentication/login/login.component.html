@@ -6,50 +6,34 @@
                 <div class="box my-6" >
                     <div class="box-body !p-[3rem]">
                         <div class="mb-3 flex justify-center">
-                            <a [routerLink]="['/nuplinTV/inicio']">
-                                <img src="./assets/images/brand-logos/desktop-logo.png" alt="logo" class="desktop-logo">
-                                <img src="./assets/images/brand-logos/desktop-white.png" alt="logo" class="desktop-white">
-                            </a>
+                                <img src="./assets/images/company-logos/1 NUPLIN-NEGATIVO-PARA-CLARO-109x31.png" alt="logo" class="desktop-logo">
+                                <img src="./assets/images/company-logos/2 NUPLIN-POSITIVO PARA OSCURO-109x31.png" alt="logo" class="desktop-white">
                         </div>
                         <form [formGroup]="loginForm" (ngSubmit)="Submit()" >
-                            @if(errorMessage.length > 0){
+                            <p class="text-danger" *ngIf="errorTextUsername.length > 0">{{errorTextUsername}}</p>
+                            <p class="text-danger" *ngIf="errorTextPassword.length > 0">{{errorTextPassword}}</p>
 
-                            <p class="text-danger">  
-                                {{errorMessage}}</p>
-                            }
-                            @if(_error.message.length > 0){   
-
-
-                            <p class="text-danger">
-                                {{_error.message}} </p>
-                            }
                             <p class="h4 font-semibold !mb-1">Iniciar Sesión</p>
                             <p class="mb-4 text-textmuted dark:text-textmuted/50 font-normal">Bienvenido</p>
                             <div class="grid grid-cols-12 gap-y-4">
                             <div class="xl:col-span-12 col-span-12">
                                 <label for="signup-firstname" class="ti-form-label text-default">Usuario</label>
-                                <input type="email" class="form-control" id="signup-firstname" placeholder="User Name" autocomplete formControlName="username"
-                                [ngModel]="email" required>
+                                <input type="email" class="form-control" id="signup-firstname" placeholder="User Name" autocomplete formControlName="username" required>
                             </div>
                             <div class="xl:col-span-12 col-span-12">
                                 <label for="signin-password" class="ti-form-label text-default block">Contraseña<a routerLink="/authentication/reset-password/basic" class="float-end text-danger opacity-50 font-medium text-[0.75rem]">Recuperar</a></label>
                                 <div class="relative">
-                                    <input type="password" [type]="showPassword ? 'text' : 'password'" class="form-control" id="signin-password" placeholder="password"  autocomplete placeholder="password"
-                                    [type]="showPassword ? 'text' : 'password'" autocomplete
-                                    placeholder="Password" formControlName="password"
-                                    [ngModel]="password" required>
+                                    <input [type]="showPassword ? 'text' : 'password'" class="form-control" id="signin-password" placeholder="Password" formControlName="password" required>
                                     <a href="javascript:void(0);" class="show-password-button text-textmuted dark:text-textmuted/50" (click)="togglePassword()"><i class="{{toggleClass}}  align-middle"></i></a>
                                 </div>
                             </div>
                             </div>
                             <div class="grid mt-4">
-                                <button  [disabled]="!loginForm.valid || authservice.showLoader" autofocus
-                                [class.loader--text]="authservice.showLoader" class="ti-btn ti-btn-primary{{
-                                    disabled
-                                }}" >Ingresar</button>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-textmuted dark:text-textmuted/50 mt-4 mb-0">¿No tienes una cuenta?  <a [routerLink]="'/authentication/sign-up/basic'" class="text-primary">Registrarse</a></p>
+                                <div id="recaptcha-container"></div>
+                                <button [disabled]="!loginForm.valid"
+                                    class="ti-btn ti-btn-primary">
+                                    Ingresar
+                                </button>
                             </div>
                         </form>
                     </div>

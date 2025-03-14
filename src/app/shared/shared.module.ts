@@ -6,7 +6,7 @@ import { ContentLayoutComponent } from './layouts/content-layout/content-layout.
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SwitcherComponent } from './components/switcher/switcher.component';
+
 import { ColorPickerModule, ColorPickerService } from 'ngx-color-picker';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { AuthenticationLayoutComponent } from './layouts/authentication-layout/authentication-layout.component';
@@ -22,7 +22,6 @@ import { HoverEffectSidebarDirective } from './directives/hover-effect-sidebar.d
         HeaderComponent,
         SidebarComponent,
         ContentLayoutComponent,  
-        SwitcherComponent,
         PageHeaderComponent,
         TabToTopComponent,
         FooterComponent,
@@ -44,7 +43,6 @@ import { HoverEffectSidebarDirective } from './directives/hover-effect-sidebar.d
         HeaderComponent,
         SidebarComponent,
         ContentLayoutComponent,
-        SwitcherComponent,
         PageHeaderComponent, 
         TabToTopComponent,
         FooterComponent,

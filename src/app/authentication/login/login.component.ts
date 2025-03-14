@@ -1,34 +1,26 @@
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, CommonModule } from '@angular/common';
 import { Component, ElementRef, Inject, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router, RouterModule } from '@angular/router';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../shared/services/auth.service';
-import { FirebaseService } from '../../shared/services/firebase.service';
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterModule,FormsModule,ReactiveFormsModule ,AngularFireModule,
-    AngularFireDatabaseModule,
-    AngularFirestoreModule,ToastrModule
-],
-  
-  providers: [FirebaseService,{ provide: ToastrService, useClass: ToastrService }],
+  imports: [RouterModule,FormsModule,ReactiveFormsModule ,ToastrModule, CommonModule],
+  providers: [{ provide: ToastrService, useClass: ToastrService }],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
   public showPassword: boolean = false;
-
   toggleClass = 'off-line';
   active="Angular";
-  firestoreModule: any;
-  databaseModule: any;
+  errorTextUsername: string = '';
+  errorTextPassword: string = '';
   authModule: any;
   public togglePassword() {
     this.showPassword = !this.showPassword;
@@ -38,128 +30,110 @@ export class LoginComponent {
       this.toggleClass = 'line';
     }
 }
+
 disabled = '';
+captchaResponse: string = "";
+recaptchaToken: string = '';
+grecaptcha: any;
+public loginForm!: FormGroup;
+get form() {
+  return this.loginForm.controls;
+}
+
 constructor(
   @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,
- private sanitizer: DomSanitizer,
+  private sanitizer: DomSanitizer,
   public authservice: AuthService,
   private router: Router,
   private formBuilder: FormBuilder,
   private renderer: Renderer2,
-  private firebaseService: FirebaseService,
   private toastr: ToastrService 
 ) {
-  // AngularFireModule.initializeApp(environment.firebase);
+  
   document.body.classList.add('authentication-background');
    const bodyElement = this.renderer.selectRootElement('body', true);
-  //  this.renderer.setAttribute(bodyElement, 'class', 'cover1 justify-center');
-  
 }
-// firestoreModule = this.firebaseService.getFirestore();
-// databaseModule = this.firebaseService.getDatabase();
-// authModule = this.firebaseService.getAuth();
 
 ngOnDestroy(): void {
   document.body.classList.remove('authentication-background');    
 }
 ngOnInit(): void {
+  const script = document.createElement('script');
+  script.src = `https://www.google.com/recaptcha/api.js?render=${environment.recaptchaSiteKey}`;
+  script.async = true;
+  script.defer = true;
+  document.body.appendChild(script);
+
   this.loginForm = this.formBuilder.group({
-    username: ['example@admin.com', [Validators.required, Validators.email]],
-    password: ['exampleadmin', Validators.required],
+    username: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required],
   });
-// Initialize Firebase services here
-this.firestoreModule = this.firebaseService.getFirestore();
-this.databaseModule = this.firebaseService.getDatabase();
-this.authModule = this.firebaseService.getAuth();
 }
 
-// firebase
-
-email = 'example@admin.com';
-password = 'exampleadmin';
-errorMessage = ''; // validation _error handle
-_error: { name: string; message: string } = { name: '', message: '' }; // for firbase _error handle
-
-clearErrorMessage() {
-  this.errorMessage = '';
-  this._error = { name: '', message: '' };
-}
-
-login() {
-  this.disabled = "btn-loading"
-  this.clearErrorMessage();
-  if (this.validateForm(this.email, this.password)) {
-    this.authservice
-      .loginWithEmail(this.email, this.password)
-      .then(() => {
+async Submit() {
+  this.disabled = "btn-loading";
+  if (!this.validateForm(this.loginForm.value.username, this.loginForm.value.password)) {
+    this.toastr.error('Uppps', 'NuplinTv', { timeOut: 3000, positionClass: 'toast-top-right' });
+    return;
+  }
+  await this.verifyRecaptcha();
+  const hashedPassword = await this.hashPassword(this.loginForm.value.password);
+  
+  
+  if (!this.recaptchaToken) {
+    this.toastr.error('Error con reCAPTCHA, intenta nuevamente', 'NuplinTv', { timeOut: 3000 });
+    return;
+  }
+  
+  this.authservice
+    .loginWithEmail(this.loginForm.value.username, hashedPassword, this.recaptchaToken)
+    .then((success) => {
+      if (success) {
         this.router.navigate(['/nuplinTV/inicio']);
         console.clear();
-        this.toastr.success('Hola','NuplinTv', {
-          timeOut: 3000,
-          positionClass: 'toast-top-right',
-        });
-      })
-      .catch((_error: any) => {
-        this._error = _error;
-        this.router.navigate(['/']);
-      });
-   
-  }
-  else {
-    this.toastr.error('Uppps','NuplinTv', {
-      timeOut: 3000,
-      positionClass: 'toast-top-right',
+        this.toastr.success('Hola', 'NuplinTv', { timeOut: 3000, positionClass: 'toast-top-right' });
+      } else {
+        this.toastr.error('Credenciales incorrectas', 'NuplinTv', { timeOut: 3000 });
+      }
+    })
+    .catch((error) => {
+      console.error('Error en login:', error);
+      this.toastr.error('Error en autenticación', 'NuplinTv', { timeOut: 3000 });
     });
+}
+
+async verifyRecaptcha() {
+  try {
+    this.recaptchaToken = await (window as any).grecaptcha.execute(environment.recaptchaSiteKey, { action: 'login' });
+  } catch (error) {
+    console.error('Error ejecutando reCAPTCHA', error);
+    this.recaptchaToken = '';
   }
 }
 
 validateForm(email: string, password: string) {
   if (email.length === 0) {
-    this.errorMessage = 'please enter email id';
+    this.errorTextUsername = 'Debe ingresar su correo de usuario';
     return false;
   }
 
   if (password.length === 0) {
-    this.errorMessage = 'please enter password';
+    this.errorTextPassword = 'Debe ingresar su contraseña de usuario';
     return false;
   }
 
-  if (password.length < 6) {
-    this.errorMessage = 'password should be at least 6 char';
-    return false;
-  }
-
-  this.errorMessage = '';
   return true;
   
 }
 
-//angular
-public loginForm!: FormGroup;
-public error: any = '';
-
-get form() {
-  return this.loginForm.controls;
+async hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-384', data);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map(byte => byte.toString(16).padStart(2, '0'))
+    .join('');
+}
 }
 
-Submit() {
-  console.log(this.loginForm)
-  if (
-    this.loginForm.controls['username'].value === 'example@admin.com' &&
-    this.loginForm.controls['password'].value === 'exampleadmin'
-  ) {
-    this.router.navigate(['/nuplinTV/inicio']);
-    this.toastr.success('login successful','NuplinTv', {
-      timeOut: 3000,
-      positionClass: 'toast-top-right',
-    });
-  } else {
-    this.toastr.error('Invalid details','NuplinTv', {
-      timeOut: 3000,
-      positionClass: 'toast-top-right',
-    });
-  }
 
-}
-
-}
