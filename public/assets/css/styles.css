@@ -1984,14 +1984,14 @@ typography
 }
 
 [bg-img=bgimg4] .app-sidebar {
-  @apply bg-[url("../public/assets/images/menu-bg-images/bg-img4.jpg")] bg-cover bg-center border-e-0 !important;
+  @apply bg-[url("../public/assets/images/menu-bg-images/bgimg-admin.webp")] bg-cover bg-center border-e-0 !important;
 }
 [bg-img=bgimg4][data-menu-styles=gradient] .app-sidebar {
   @apply bg-[url("../public/assets/images/menu-bg-images/bg-img4.jpg")] bg-cover bg-center !important;
 }
 
 [bg-img=bgimg5] .app-sidebar {
-  @apply bg-[url("../public/assets/images/menu-bg-images/bg-img5.jpg")] bg-cover bg-center border-e-0 !important;
+  @apply bg-[url("../public/assets/images/menu-bg-images/bgimg-cliente.webp")] bg-cover bg-center border-e-0 !important;
 }
 [bg-img=bgimg5][data-menu-styles=gradient] .app-sidebar {
   @apply bg-[url("../public/assets/images/menu-bg-images/bg-img5.jpg")] bg-cover bg-center !important;

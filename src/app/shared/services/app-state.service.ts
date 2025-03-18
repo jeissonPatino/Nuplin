@@ -1,5 +1,6 @@
 import { ElementRef, Injectable, Renderer2 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { AuthService } from './auth.service';
 
 interface StateType {
   direction: string;
@@ -41,12 +42,34 @@ export class AppStateService {
   private stateSubject = new BehaviorSubject<StateType>(this.initialState); // Use any for initial null value
   state$ = this.stateSubject.asObservable();
 
-  constructor() {
+  private roleToBackgroundMap: { [key: string]: string } = {
+    'Admin': 'bgimg4',
+    'Cliente': 'bgimg5',
+    'Programador': '../public/assets/images/menu-bg-images/bg-img5.jpg',
+    'Gerente': '../public/assets/images/menu-bg-images/bg-img5.jpg',
+    'Marketing': '../public/assets/images/menu-bg-images/bg-img5.jpg',
+    'Comercial': '../public/assets/images/menu-bg-images/bg-img5.jpg',
+    'Coordinador': '../public/assets/images/menu-bg-images/bg-img5.jpg'
+  };
+
+
+
+  constructor(private authService: AuthService) {
     const initialState: StateType = this.getInitialStateFromLocalStorage();
     this.initializeState();
     this.stateSubject.next(initialState);
+    this.setBackgroundImageBasedOnRole();
   }
 
+  
+
+  private setBackgroundImageBasedOnRole() {
+    
+    const userRole = this.authService.getUserRole();
+    const backgroundImage = userRole ? this.roleToBackgroundMap[userRole] || 'default-bg.jpg' : 'default-bg.jpg'; 
+
+    this.updateState({ backgroundImage });
+  }
 
   private getInitialStateFromLocalStorage(): StateType {
     try {
@@ -68,6 +91,7 @@ export class AppStateService {
   }
 
   updateState(newState?: Partial<any>) { // Use any for partial updates
+    debugger;
     const currentState = this.stateSubject.getValue(); // Get current state
 
     if (!currentState) {

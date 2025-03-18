@@ -48,6 +48,7 @@ export class AuthService {
   }
 
   getUserRole(): string | null {
-    return this.getUser()?.role || '';
+    const userData = JSON.parse(sessionStorage.getItem('user') || '{}');
+    return userData.role || 'default';
   }
 }
