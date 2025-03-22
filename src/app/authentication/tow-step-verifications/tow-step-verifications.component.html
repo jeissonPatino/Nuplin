@@ -1,0 +1,54 @@
+<div class="container-lg">
+    <div class="grid grid-cols-12 justify-center items-center authentication two-step-verification authentication-basic h-full">
+        <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-3 md:col-span-3 sm:col-span-2 col-span-12"></div>
+        <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-6 md:col-span-6 sm:col-span-8 col-span-12 px-3">
+            <div class="box my-4">
+                <div class="box-body p-[3rem]">
+                    <div class="mb-3 flex justify-center">
+                        <img src="./assets/images/company-logos/1 NUPLIN-NEGATIVO-PARA-CLARO-109x31.png" alt="logo" class="desktop-logo">
+                        <img src="./assets/images/company-logos/2 NUPLIN-POSITIVO PARA OSCURO-109x31.png" alt="logo" class="desktop-white">
+                    </div>
+                    <p class="h5 mb-2 text-center">Código de verificación</p>
+                    <p class="mb-4 text-textmuted dark:text-textmuted/50 opacity-70 font-normal text-center text-xs">Ingresa el código de 6 dígitos enviado al correo {{ email }}</p>
+                    <div class="grid grid-cols-12 gy-3">
+                        <div class="xl:col-span-12 col-span-12 mb-2">
+                            <div class="grid grid-cols-12 gap-x-2">
+                                <div class="col-span-2">
+                                    <input  type="text" class="form-control text-center" id="one"  maxlength="1" #oneInput required (keyup)="onDigitInput($event, twoInput)">
+                                </div>
+                                <div class="col-span-2">
+                                    <input type="text" class="form-control text-center" id="two" #twoInput maxlength="1" (keyup)="onDigitInput($event, threeInput)">
+                                </div>
+                                <div class="col-span-2">
+                                    <input type="text" class="form-control text-center" id="three" #threeInput maxlength="1" (keyup)="onDigitInput($event, fourInput)">
+                                </div>
+                                <div class="col-span-2">
+                                    <input type="text" class="form-control text-center" id="four" #fourInput maxlength="1" (keyup)="onDigitInput($event, fiveInput)">
+                                </div>
+                                <div class="col-span-2">
+                                    <input type="text" class="form-control text-center" id="five" #fiveInput maxlength="1" (keyup)="onDigitInput($event, sixInput)">
+                                </div>
+                                <div class="col-span-2">
+                                    <input type="text" class="form-control text-center" id="six" #sixInput maxlength="1">
+                                </div>
+                            </div>
+                            <div class="form-check mt-2">
+                                <label class="form-check-label text-[14px]" for="defaultCheck1">
+                                    ¿No recibiste un código? <a (click)="reSend()" class="text-primary ms-2 inline-block">Reenviar</a>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="xl:col-span-12 col-span-12 grid mt-2">
+                            <button 
+                                class="ti-btn ti-btn-primary"
+                                (click)="enviarCodigo()">
+                                    Ingresar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-3 md:col-span-3 sm:col-span-2 col-span-12"></div>
+    </div>
+</div>

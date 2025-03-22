@@ -11,10 +11,10 @@ export class AuthGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const expectedRole = route.data['role']; 
-    const user = this.authService.getUser(); 
+    const user = this.authService.getUserRole(); 
   
     if (user) {
-      if (user.role === 'Admin' || user.role === expectedRole) {
+      if (user === 'Admin' || user === expectedRole) {
         return true;
       }
     }

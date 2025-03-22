@@ -6,6 +6,8 @@ import { Router, RouterModule } from '@angular/router';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../shared/services/auth.service';
 import { environment } from "../../../environments/environment";
+import { TowStepVerificationsComponent } from '../tow-step-verifications/tow-step-verifications.component';
+
 
 @Component({
   selector: 'app-login',
@@ -29,16 +31,16 @@ export class LoginComponent {
     } else {
       this.toggleClass = 'line';
     }
-}
-
-disabled = '';
-captchaResponse: string = "";
-recaptchaToken: string = '';
-grecaptcha: any;
-public loginForm!: FormGroup;
-get form() {
-  return this.loginForm.controls;
-}
+  }
+  disabled = '';
+  captchaResponse: string = "";
+  recaptchaToken: string = '';
+  grecaptcha: any;
+  public loginForm!: FormGroup;
+  get form() {
+    return this.loginForm.controls;
+  }
+  emailOculto: string = '';
 
 constructor(
   @Inject(DOCUMENT) private document: Document,private elementRef: ElementRef,
@@ -49,91 +51,80 @@ constructor(
   private renderer: Renderer2,
   private toastr: ToastrService 
 ) {
-  
-  document.body.classList.add('authentication-background');
-   const bodyElement = this.renderer.selectRootElement('body', true);
-}
-
-ngOnDestroy(): void {
-  document.body.classList.remove('authentication-background');    
-}
-ngOnInit(): void {
-  const script = document.createElement('script');
-  script.src = `https://www.google.com/recaptcha/api.js?render=${environment.recaptchaSiteKey}`;
-  script.async = true;
-  script.defer = true;
-  document.body.appendChild(script);
-
-  this.loginForm = this.formBuilder.group({
-    username: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
-  });
-}
-
-async Submit() {
-  this.disabled = "btn-loading";
-  if (!this.validateForm(this.loginForm.value.username, this.loginForm.value.password)) {
-    this.toastr.error('Uppps', 'NuplinTv', { timeOut: 3000, positionClass: 'toast-top-right' });
-    return;
+    document.body.classList.add('authentication-background');
+    const bodyElement = this.renderer.selectRootElement('body', true);
   }
-  await this.verifyRecaptcha();
-  const hashedPassword = await this.hashPassword(this.loginForm.value.password);
-  
-  
-  if (!this.recaptchaToken) {
-    this.toastr.error('Error con reCAPTCHA, intenta nuevamente', 'NuplinTv', { timeOut: 3000 });
-    return;
+
+  ngOnDestroy(): void {
+    document.body.classList.remove('authentication-background');    
   }
-  
-  this.authservice
-    .loginWithEmail(this.loginForm.value.username, hashedPassword, this.recaptchaToken)
-    .then((success) => {
-      if (success) {
-        this.router.navigate(['/nuplinTV/inicio']);
-        console.clear();
-        this.toastr.success('Hola', 'NuplinTv', { timeOut: 3000, positionClass: 'toast-top-right' });
-      } else {
-        this.toastr.error('Credenciales incorrectas', 'NuplinTv', { timeOut: 3000 });
-      }
-    })
-    .catch((error) => {
-      console.error('Error en login:', error);
-      this.toastr.error('Error en autenticación', 'NuplinTv', { timeOut: 3000 });
+
+  ngOnInit(): void {
+    const script = document.createElement('script');
+    script.src = `https://www.google.com/recaptcha/api.js?render=${environment.recaptchaSiteKey}`;
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+    this.loginForm = this.formBuilder.group({
+      username: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
     });
-}
-
-async verifyRecaptcha() {
-  try {
-    this.recaptchaToken = await (window as any).grecaptcha.execute(environment.recaptchaSiteKey, { action: 'login' });
-  } catch (error) {
-    console.error('Error ejecutando reCAPTCHA', error);
-    this.recaptchaToken = '';
-  }
-}
-
-validateForm(email: string, password: string) {
-  if (email.length === 0) {
-    this.errorTextUsername = 'Debe ingresar su correo de usuario';
-    return false;
   }
 
-  if (password.length === 0) {
-    this.errorTextPassword = 'Debe ingresar su contraseña de usuario';
-    return false;
+  async Submit() {
+    this.disabled = "btn-loading";
+    if (!this.validateForm(this.loginForm.value.username, this.loginForm.value.password)) {
+      this.toastr.error('Uppps', 'NuplinTv', { timeOut: 3000, positionClass: 'toast-top-right' });
+      return;
+    }
+    await this.verifyRecaptcha();
+    if (!this.recaptchaToken) {
+      this.toastr.error('Error con reCAPTCHA, intenta nuevamente', 'NuplinTv', { timeOut: 3000 });
+      return;
+    }
+    this.validatinUser(this.loginForm)
   }
 
-  return true;
+  async verifyRecaptcha() {
+    try {
+      this.recaptchaToken = await (window as any).grecaptcha.execute(environment.recaptchaSiteKey, { action: 'login' });
+    } catch (error) {
+      console.error('Error ejecutando reCAPTCHA', error);
+      this.recaptchaToken = '';
+    }
+  }
+
+  validateForm(email: string, password: string) {
+    if (email.length === 0) {
+      this.errorTextUsername = 'Debe ingresar su correo de usuario';
+      return false;
+    }
+    if (password.length === 0) {
+      this.errorTextPassword = 'Debe ingresar su contraseña de usuario';
+      return false;
+    }
+    return true;
+  }
+
+  async validatinUser(loginForm: any){
+    loginForm = this.loginForm;
+    const userValidate = await this.authservice.validateUser(loginForm)
+    if(userValidate){
+      this.authservice.setUser(this.loginForm);
+      this.router.navigate(['/auth/two-step-verification']);    
+    }else{
+      this.toastr.error('Las credenciales ingresadas no son correctas', 'NuplinTv', { timeOut: 5000 });
+    }
+    this.ocultarCorreo(loginForm.value.username);
+  }
+
+  ocultarCorreo(email: string){
+    if (!email) return '';
+    const [local, domain] = email.split('@');
+    const oculto = local.slice(0, 3) + '****';
+    return `${oculto}@${domain}`
+  }
   
-}
-
-async hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-384', data);
-  return Array.from(new Uint8Array(hashBuffer))
-    .map(byte => byte.toString(16).padStart(2, '0'))
-    .join('');
-}
 }
 
 

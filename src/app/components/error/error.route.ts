@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 export const admin: Routes = [
   {path:'error',children:[
     {
-      path: 'error401',
+      path: 'acceso-denegado',
       loadComponent: () =>
         import('./error401/error401.component').then((m) => m.Error401Component),
     },

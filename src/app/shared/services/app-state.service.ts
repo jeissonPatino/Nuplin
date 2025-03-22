@@ -91,7 +91,7 @@ export class AppStateService {
   }
 
   updateState(newState?: Partial<any>) { // Use any for partial updates
-    debugger;
+    
     const currentState = this.stateSubject.getValue(); // Get current state
 
     if (!currentState) {

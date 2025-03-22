@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-modal-usuarios',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './modal-usuarios.component.html',
   styleUrl: './modal-usuarios.component.scss',
   standalone: true

@@ -1,1 +1,27 @@
-<p>modal-confirmacion works!</p>
+<div id="extralargeModal" 
+    *ngIf="showModal"
+    class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50 px-4 sm:px-6">
+    
+    <div class="ti-modal-box max-w-lg w-full m-3 bg-white rounded-lg shadow-lg transition-all transform scale-100">
+        <div class="ti-modal-content p-6">
+            <!-- Encabezado -->
+            <div class="ti-modal-header flex justify-between items-center border-b pb-3">
+                <h6 class="ti-modal-title text-lg font-semibold text-gray-900 w-full text-center">{{ title }}</h6>
+                <button type="button" class="ti-modal-close-btn" (click)="handleClose()">
+                    <i class="ri-close-line text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Cuerpo -->
+            <div class="ti-modal-body p-4 sm:p-6 lg:!max-w-4xl lg:w-full m-3 lg:!mx-auto">
+                <ng-content></ng-content> <!-- Contenido dinámico -->
+            </div>
+
+            <!-- Botones -->
+            <div class="ti-modal-footer flex justify-end gap-4 mt-4 border-t pt-3">
+                <button (click)="handleClose()" class="ti-btn ti-btn-lg ti-btn-soft-danger rounded-md px-4">Cancelar</button>
+                <button (click)="handleConfirm()" class="ti-btn ti-btn-lg ti-btn-soft-success rounded-md px-4">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
