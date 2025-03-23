@@ -448,7 +448,6 @@ get displayedRecords(): number {
   return Math.min(this.currentPage * this.itemsPerPage, this.responsiveTables.length);
 }
 
-
 //Modales
 openCreateModal() {
   const newUser = { name: '', mail: '', pack: '', dateActivation: '', periody: '', bg: '' };
@@ -479,7 +478,5 @@ handleSave(data: any) {
 
   this.closeModal();
 }
-
-
 
 }

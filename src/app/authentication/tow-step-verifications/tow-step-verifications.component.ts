@@ -28,11 +28,16 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
 
   @Output() codigoIngresado = new EventEmitter<string>();
   email: string = '';
-
+  newmail: string = '';
   ngOnInit(): void {
     this.email = this.authservice.getUser() || 'Correo no disponible';
     if(this.email==='Correo no disponible'){
       this.router.navigate(['/auth/login']);
+    }else{
+      const [local, domain] = this.email.split('@');
+      const oculto = local.slice(0, 3) + '****';
+      this.newmail = `${oculto}@${domain}`
+      alert(this.generarCodigo())
     }
   }
   
@@ -61,8 +66,7 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
       this.router.navigate(['/auth/login']);
       return;
     }
-    debugger;
-    this.authservice.loginConCodigo()
+    this.authservice.loginConCodigo(codigo)
       .then(success => {
         if (success) {
           this.router.navigate(['/nuplinTV/inicio']);
@@ -73,8 +77,13 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
   }
 
   reSend(){
-    alert("se reenvio el correo de verificacion")
+    alert(this.generarCodigo())
   }
 
+  generarCodigo(): string {
+    const generateCode =  Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('');
+    this.authservice.sendEmailCodeVerification(generateCode);
+    return generateCode;
+  }
 
 }

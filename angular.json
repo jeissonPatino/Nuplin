@@ -61,7 +61,9 @@
                 "src/.htaccess"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/filepond/dist/filepond.min.css",
+              "node_modules/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css"
             ],
             "scripts": [ "node_modules/preline/dist/preline.js"]
           },
@@ -120,7 +122,9 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/filepond/dist/filepond.min.css",
+              "node_modules/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css"
             ],
             "scripts": ["node_modules/preline/dist/preline.js"]
           }

@@ -1,1 +1,13 @@
-<p>carga-masiva-abonados works!</p>
+<div class="col-span-12 lg:col-span-12">
+    <div class="box">
+        <div class="box-header">
+            <h5 class="box-title">Single File Upload</h5>
+        </div>
+        <div class="box-body">
+            <file-pond #myPond [options]="singlepondOptions" class="filepond basic-filepond" [files]="pondFiles"
+                    (oninit)="pondHandleInit()" (onaddfile)="pondHandleAddFile($event)"
+                    (onactivatefile)="pondHandleActivateFile($event)">
+                  </file-pond>
+        </div>
+    </div>
+</div>

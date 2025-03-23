@@ -1,44 +1,63 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { Injectable, NgZone  } from '@angular/core';
+import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { EncryptionService } from './encryption.service';
 import { User } from '../models/user.model';
-import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private currentUser: User | null = null;
-  private codigo: string = ''
+  private currentUserSubject: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
+  public currentUser$: Observable<User | null> = this.currentUserSubject.asObservable();
+  private inactivityTimeout: any;
+  private readonly INACTIVITY_LIMIT = 5 * 60 * 1000;
   private email: string | null = null;
   private pass: string | null = null;
-  constructor(private router: Router) {}
+  private codigo: string = '';
 
-  //Borrar despues de obtener los datos del usuario desde el backend
-  private users: User[] = [
-    { id: 1, displayName: 'Admin Pruebas', email: 'admin@test.com', role: 'Admin', password: '0fa76955abfa9dafd83facca8343a92aa09497f98101086611b0bfa95dbc0dcc661d62e9568a5a032ba81960f3e55d4a', token: 'fake-jwt-admin' },
-    { id: 2, displayName: 'cliente Pruebas', email: 'cliente@test.com', role: 'Cliente', password: '0a989ebc4a77b56a6e2bb7b19d995d185ce44090c13e2984b7ecc6d446d4b61ea9991b76a4c2f04b1b4d244841449454', token: 'fake-jwt-cliente'}
+  constructor( private router: Router, private encryptionService: EncryptionService, private ngZone: NgZone ) {
 
-  ];
+    this.setupInactivityListener();
 
-  async validateUser(formUser: any) : Promise<boolean>{
-    debugger;
-    // validar back true o false
-    return new Promise((resolve =>{
-      const user = this.users.find(u => u.email === formUser.email && u.password === formUser.password);
-      if(user){
-        resolve(true)
-      }else{
-        resolve(false)
-      }
-    }))
   }
 
-  async loginConCodigo(): Promise<boolean> {
+  // Datos de prueba antes de conectar con el backend
+  private users: User[] = [
+    { id: 1, displayName: 'Admin Pruebas', email: 'admin@test.com', role: 'Admin', password: '12345', token: 'fake-jwt-admin' },
+    { id: 2, displayName: 'Cliente Pruebas', email: 'cliente@test.com', role: 'Cliente', password: '123456', token: 'fake-jwt-cliente' }
+  ];
+
+  private setupInactivityListener() {
+    this.resetInactivityTimer();
+    ['mousemove', 'keydown', 'click'].forEach(event => {
+      document.addEventListener(event, () => this.resetInactivityTimer());
+    });
+  }
+
+  private resetInactivityTimer() {
+    clearTimeout(this.inactivityTimeout);
+    this.inactivityTimeout = setTimeout(() => this.logout(), this.INACTIVITY_LIMIT);
+  }
+
+  async validateUser(formUser: any): Promise<boolean> {
+    const [password, username] = this.encryptionService.decrypt(formUser).split('-');
+    this.email = username;
+    this.pass = password;
+
     return new Promise((resolve) => {
-      const user = this.users.find(u => u.email === this.email && u.password === this.email);
-      if (user && this.codigo) { 
-        this.currentUser = user;
-        sessionStorage.setItem('user', JSON.stringify(user));
+      const user = this.users.find(u => u.email === this.email && u.password === this.pass);
+      resolve(!!user);
+    });
+  }
+
+  async loginConCodigo(codigo: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      const user = this.users.find(u => u.email === this.email && u.password === this.pass);
+      const validacion = this.verificarCodigo(codigo);
+
+      if (user && validacion) { 
+        this.currentUserSubject.next(user);
         resolve(true);
       } else {
         resolve(false);
@@ -47,34 +66,32 @@ export class AuthService {
   }
 
   logout(): void {
-    this.currentUser = null;
-    sessionStorage.removeItem('user');
-    localStorage.removeItem('user'); 
-    this.router.navigate(['/auth/login']).then(() => {
-      window.location.reload(); 
-    });
+    this.currentUserSubject.next(null); // Borra el usuario en memoria
+    this.router.navigate(['/auth/login']).then(() => window.location.reload());
   }
 
   isAuthenticated(): boolean {
-    return this.getUser() !== null;
+    return this.currentUserSubject.value !== null;
   }
 
   getUserRole(): string | null {
-    const userData = JSON.parse(sessionStorage.getItem('user') || '{}');
-    return userData.role || 'default';
+    return this.currentUserSubject.value?.role || null;
   }
 
-  verificarCodigo(code: string) : Observable<any>{
-    const esValido = code === this.codigo; 
-    return of(esValido);
+  verificarCodigo(code: string): boolean {
+    return code === this.codigo;
   }
 
-  setUser(user :any){
-    this.email = user.username;
-    this.pass = user.password;
+  setUser(user: any) {
+    this.email = user.value.username;
+    this.pass = user.value.password;
   }
 
-  getUser(): string | null {
-    return this.email;
+  getUser(){
+    return this.email
+  }
+
+  sendEmailCodeVerification(code: string) {
+    this.codigo = code;
   }
 }

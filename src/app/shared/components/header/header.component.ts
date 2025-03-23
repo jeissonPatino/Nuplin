@@ -251,7 +251,9 @@ export class HeaderComponent {
   public SearchResultEmpty: boolean = false;
 
   ngOnInit(): void {
-    this.dataUSer = this.autService.getUser();
+    this.autService.currentUser$.subscribe(user => {
+      this.dataUSer = user;
+    });
     this.updateTheme();
     const storedSelectedItem = localStorage.getItem('selectedItem');
     // this.updateSelectedItem();

@@ -6,7 +6,8 @@ import { Router, RouterModule } from '@angular/router';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../shared/services/auth.service';
 import { environment } from "../../../environments/environment";
-import { TowStepVerificationsComponent } from '../tow-step-verifications/tow-step-verifications.component';
+import { EncryptionService } from '../../shared/services/encryption.service';
+
 
 
 @Component({
@@ -49,7 +50,8 @@ constructor(
   private router: Router,
   private formBuilder: FormBuilder,
   private renderer: Renderer2,
-  private toastr: ToastrService 
+  private toastr: ToastrService ,
+  private encryptionService: EncryptionService
 ) {
     document.body.classList.add('authentication-background');
     const bodyElement = this.renderer.selectRootElement('body', true);
@@ -107,23 +109,18 @@ constructor(
   }
 
   async validatinUser(loginForm: any){
-    loginForm = this.loginForm;
-    const userValidate = await this.authservice.validateUser(loginForm)
+    const encryptedPassword = this.encryptionService.encrypt(loginForm);
+    const userValidate = await this.authservice.validateUser(encryptedPassword)
     if(userValidate){
+      debugger;
       this.authservice.setUser(this.loginForm);
       this.router.navigate(['/auth/two-step-verification']);    
     }else{
       this.toastr.error('Las credenciales ingresadas no son correctas', 'NuplinTv', { timeOut: 5000 });
     }
-    this.ocultarCorreo(loginForm.value.username);
   }
 
-  ocultarCorreo(email: string){
-    if (!email) return '';
-    const [local, domain] = email.split('@');
-    const oculto = local.slice(0, 3) + '****';
-    return `${oculto}@${domain}`
-  }
+  
   
 }
 
