@@ -1,13 +1,105 @@
+<!-- Start::page-header -->
+<div class="flex items-center justify-between page-header-breadcrumb flex-wrap gap-2">
+    <div>
+        <h1 class="page-title font-medium text-lg mb-0">Inicio</h1>
+    </div>
+</div>
+<!-- End::page-header -->
 <div class="col-span-12 lg:col-span-12">
     <div class="box">
         <div class="box-header">
-            <h5 class="box-title">Single File Upload</h5>
+            <h5 class="box-title">Carga Masiva Abonados</h5>
         </div>
         <div class="box-body">
             <file-pond #myPond [options]="singlepondOptions" class="filepond basic-filepond" [files]="pondFiles"
                     (oninit)="pondHandleInit()" (onaddfile)="pondHandleAddFile($event)"
                     (onactivatefile)="pondHandleActivateFile($event)">
-                  </file-pond>
+            </file-pond>
+        </div>
+        <div class="mt-4 flex justify-center">
+            <button (click)="mostrarModal()" class="bg-blue-500 text-white px-4 py-2 rounded-md mb-4">
+                📄 Ver instrucciones 
+            </button>
+        </div>
+        <div class="box-body space-y-3 flex justify-center mt-4">
+            <span>
+                {{ displayedRecords }} registros de {{ this.responsiveTables.length }}
+            </span>
+        </div>
+        <div class="table-responsive">
+            <spk-reusable-tables [columns]="responsiveColumn"  tableHeadColumn="text-start"
+            trClass="border-b  border-defaultborder dark:border-defaultborder/10"
+            tableClass="ti-custom-table whitespace-nowrap min-w-full"  [showCheckbox]="false">
+
+                @for(table of paginatedData;track $index){
+                <tr>
+                    <td>
+                        <div class="flex items-center">
+                            {{table.name}}
+                        </div>
+                    </td>
+                    <td>{{table.mail}}</td>
+                    <td>{{table.pack}}</td>
+                    <td>{{table.dateActivation}}</td>
+                    <td><span class="badge bg-{{table.bg}}-transparent">{{table.periody}}</span></td>
+                </tr>
+                }
+            </spk-reusable-tables>
+        </div>
+        <!-- Pagination -->
+        <div class="flex justify-center mt-4">
+            <nav class="flex items-center gap-x-2">
+                <!-- Botón Anterior -->
+                <button type="button" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1"
+                    class="min-h-[38px] min-w-[38px] flex justify-center items-center text-gray-500 hover:text-blue-600 disabled:opacity-50">
+                    <i class="ri-arrow-left-s-line text-lg"></i>
+                </button>
+        
+                <div class="flex items-center gap-x-2">
+                    @for (page of totalPagesArray; track $index) {
+                        <button type="button" (click)="changePage(page)"
+                            [class.border-blue-500]="page === currentPage"
+                            [class.text-blue-600]="page === currentPage"
+                            [class.bg-blue-100]="page === currentPage"
+                            class="min-h-[38px] min-w-[38px] flex justify-center items-center border border-gray-300 rounded-lg text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-all">
+                            {{ page }}
+                        </button>
+                    }
+                </div>
+        
+                <!-- Botón Siguiente -->
+                <button type="button" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages()"
+                    class="min-h-[38px] min-w-[38px] flex justify-center items-center text-gray-500 hover:text-blue-600 disabled:opacity-50">
+                    <i class="ri-arrow-right-s-line text-lg"></i>
+                </button>
+            </nav>
+        </div>
+        <!-- End Pagination -->
+    </div>
+</div>
+
+<div *ngIf="modalVisible" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg">
+        <h3 class="text-lg font-semibold mb-3">📌 Instrucciones para carga masiva</h3>
+        <p class="text-sm mb-3">Por favor, asegúrate de que el archivo CSV cumpla con las siguientes reglas:</p>
+        <ul class="list-disc pl-5 text-sm space-y-2">
+            <li>El archivo debe ser **CSV** (separado por **comas**).</li>
+            <li>Campos obligatorios: <strong>Nombre, Email, Contraseña, Departamento, País, Paquete, Activo hasta, Canales adicionales</strong>.</li>
+            <li>El **email** debe tener un formato válido</li>
+            <li>Los valores permitidos en "Paquete" son: <strong>Paquete Básico, Paquete Premium, Paquete VIP</strong>.</li>
+            <li>Los valores en "Canales adicionales" pueden ser: <strong>Sin canales adicionales, Win+, Paquete Adultos</strong>.</li>
+            <li>No debe haber filas vacías ni datos con caracteres especiales sospechosos.</li>
+            <li>La contraseña se generará automáticamente para cada abonado.  </li>
+            <li>No es necesario incluir una columna de "Contraseña" en el archivo CSV. </li>
+        </ul>
+        
+        <div class="mt-4 flex justify-end">
+            <a (click)="descargarCSV()" class="bg-green-500 text-white px-4 py-2 rounded-md mr-2 cursor-pointer">
+                ⬇️ Descargar CSV de ejemplo
+            </a>
+            <button (click)="modalVisible = false" class="bg-red-500 text-white px-4 py-2 rounded-md">
+                Cerrar
+            </button>
         </div>
     </div>
 </div>
