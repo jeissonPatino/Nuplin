@@ -12,7 +12,6 @@
                         <form [formGroup]="loginForm" (ngSubmit)="Submit()" >
                             <p class="text-danger" *ngIf="errorTextUsername.length > 0">{{errorTextUsername}}</p>
                             <p class="text-danger" *ngIf="errorTextPassword.length > 0">{{errorTextPassword}}</p>
-
                             <p class="h4 font-semibold !mb-1">Iniciar Sesión</p>
                             <p class="mb-4 text-textmuted dark:text-textmuted/50 font-normal">Bienvenido</p>
                             <div class="grid grid-cols-12 gap-y-4">
@@ -21,7 +20,14 @@
                                 <input type="email" class="form-control" id="signup-firstname" placeholder="Correo" autocomplete formControlName="username" required>
                             </div>
                             <div class="xl:col-span-12 col-span-12">
-                                <label for="signin-password" class="ti-form-label text-default block">Contraseña<a routerLink="/authentication/reset-password/basic" class="float-end text-danger opacity-50 font-medium text-[0.75rem]">Recuperar</a></label>
+                                <label for="signin-password" class="ti-form-label text-default block">
+                                    Contraseña
+                                    <span class="float-end">
+                                      <a href="auth/remember-password" class="text-danger opacity-50 font-medium text-[0.75rem]">
+                                        Recuperar
+                                      </a>
+                                    </span>
+                                  </label>
                                 <div class="relative">
                                     <input [type]="showPassword ? 'text' : 'password'" class="form-control" id="signin-password" placeholder="Contraseña" formControlName="password" required>
                                     <a href="javascript:void(0);" class="show-password-button text-textmuted dark:text-textmuted/50" (click)="togglePassword()"><i class="{{toggleClass}}  align-middle"></i></a>
@@ -42,4 +48,5 @@
         </div>
     </div>
   </div>
+ 
   

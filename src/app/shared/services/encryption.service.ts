@@ -7,9 +7,10 @@ import { Injectable } from '@angular/core';
 export class EncryptionService {
   private secretKey = 'clave-secreta-123'; 
 
-  encrypt(value: any): string {
-    let pass = value.value.password;
-    let user = value.value.username;
+  encrypt(value: { username: string; password?: string }): string {
+     
+    let pass = value.password ?? "ChangePass";
+    let user = value.username;
     const dataChainUser = pass+'-'+user;
     return CryptoJS.AES.encrypt(dataChainUser, this.secretKey).toString();
   }

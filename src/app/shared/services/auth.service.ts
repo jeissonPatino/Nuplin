@@ -24,8 +24,8 @@ export class AuthService {
 
   // Datos de prueba antes de conectar con el backend
   private users: User[] = [
-    { id: 1, displayName: 'Admin Pruebas', email: 'admin@test.com', role: 'Admin', password: '12345', token: 'fake-jwt-admin' },
-    { id: 2, displayName: 'Cliente Pruebas', email: 'cliente@test.com', role: 'Cliente', password: '123456', token: 'fake-jwt-cliente' }
+    { id: 1, displayName: 'Admin Pruebas', email: 'admin@test.com', role: 'Admin', password: '12345', token: 'fake-jwt-admin', status: true },
+    { id: 2, displayName: 'Cliente Pruebas', email: 'cliente@test.com', role: 'Cliente', password: '123456', token: 'fake-jwt-cliente', status: true }
   ];
 
   private setupInactivityListener() {
@@ -48,6 +48,18 @@ export class AuthService {
     return new Promise((resolve) => {
       const user = this.users.find(u => u.email === this.email && u.password === this.pass);
       resolve(!!user);
+    });
+  }
+
+  async validateUserStatus(username: string): Promise<{ exists: boolean; active: boolean }>{
+     
+    return new Promise((resolve) => {
+      const decryptedUsername = this.encryptionService.decrypt(username).split('-')[1];
+      const user = this.users.find(u => u.email === decryptedUsername);
+      resolve({
+        exists: !!user, 
+        active: user ? user.status : false
+      });
     });
   }
 
@@ -93,5 +105,38 @@ export class AuthService {
 
   sendEmailCodeVerification(code: string) {
     this.codigo = code;
+  }
+
+  generarPassword(): string {
+    const caracteres = 'abcdefghijklmnopqrstuvwxyz';
+    const mayusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numeros = '0123456789';
+    const especiales = '!@#$%^&*()-_=+';
+
+    let password = '';
+    password += mayusculas.charAt(Math.floor(Math.random() * mayusculas.length));
+    password += numeros.charAt(Math.floor(Math.random() * numeros.length));
+    password += especiales.charAt(Math.floor(Math.random() * especiales.length));
+    const todos = caracteres + mayusculas + numeros + especiales;
+    while (password.length < 12) {
+      password += todos.charAt(Math.floor(Math.random() * todos.length));
+    }
+    return password.split('').sort(() => 0.5 - Math.random()).join('');
+  }
+
+  actualizarPassword(username: string, newPassword: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const user = this.users.find(u => u.email === username);
+        console.log(user)
+        if (user) {
+          console.log(`✅ Contraseña de ${username} actualizada a: ${newPassword}`);
+          resolve(true);
+        } else {
+          console.error("❌ Usuario no encontrado");
+          resolve(false);
+        }
+      }, 1000);
+    });
   }
 }

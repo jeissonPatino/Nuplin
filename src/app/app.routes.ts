@@ -16,8 +16,7 @@ export const routes: Routes = [
     },
     { 
       path: 'auth/remember-password', 
-      component: RememberPasswordComponent,
-      canActivate: [AuthGuard] 
+      component: RememberPasswordComponent
     },
     { 
       path: 'auth/two-step-verification', 

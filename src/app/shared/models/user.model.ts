@@ -5,4 +5,5 @@ export interface User {
     role: 'Admin' | 'Cliente';
     password: string;
     token?: string;
+    status: boolean;
   }

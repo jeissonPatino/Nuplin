@@ -435,7 +435,7 @@ export class CargaMasivaAbonadosComponent implements AfterViewInit {
   }
 
   pondHandleInit() {
-    debugger;
+     
   }
 
   pondHandleAddFile(event: any) {
@@ -476,7 +476,7 @@ export class CargaMasivaAbonadosComponent implements AfterViewInit {
   }
 
   pondHandleActivateFile(event: any) {
-    debugger;
+     
   } 
 
   get displayedRecords(): number {

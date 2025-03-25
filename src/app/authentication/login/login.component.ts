@@ -10,6 +10,7 @@ import { EncryptionService } from '../../shared/services/encryption.service';
 
 
 
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -109,12 +110,13 @@ constructor(
   }
 
   async validatinUser(loginForm: any){
-    const encryptedPassword = this.encryptionService.encrypt(loginForm);
+    const encryptedPassword = this.encryptionService.encrypt({ username: loginForm.value.username, password: loginForm.value.password});
     const userValidate = await this.authservice.validateUser(encryptedPassword)
     if(userValidate){
-      debugger;
       this.authservice.setUser(this.loginForm);
-      this.router.navigate(['/auth/two-step-verification']);    
+      this.router.navigate(['/auth/two-step-verification'],
+        { queryParams: { contexto: 'login' }}
+      );
     }else{
       this.toastr.error('Las credenciales ingresadas no son correctas', 'NuplinTv', { timeOut: 5000 });
     }

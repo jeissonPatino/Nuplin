@@ -1,6 +1,7 @@
-import { Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../shared/services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-tow-step-verifications',
@@ -12,7 +13,8 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute, 
     private router: Router,
-    public authservice: AuthService
+    public authservice: AuthService,
+     private toastr: ToastrService ,
 ){
     document.body.classList.add('authentication-background');
   }
@@ -29,7 +31,23 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
   @Output() codigoIngresado = new EventEmitter<string>();
   email: string = '';
   newmail: string = '';
+  contexto: string = '';
+  username: string = '';
+  newPass: string = '';
+
+
+
   ngOnInit(): void {
+
+    this.route.queryParams.subscribe(params => {
+      this.contexto = params['contexto'];
+      this.username = params['username'] || '';
+      this.newPass = params['newPass'] || '';
+      if (this.contexto === 'cambio-pass' && (!this.username || !this.newPass)) {
+        this.router.navigate(['/auth/login']);
+      }
+    });
+
     this.email = this.authservice.getUser() || 'Correo no disponible';
     if(this.email==='Correo no disponible'){
       this.router.navigate(['/auth/login']);
@@ -60,21 +78,54 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
       this.sixInput.nativeElement.value
     ].join('');
   
-    const userData = this.authservice.getUser();
-  
-    if (!userData) {
-      this.router.navigate(['/auth/login']);
-      return;
+    if (this.contexto === 'login') {
+      this.validarCodigoLogin(codigo);
+    } else if (this.contexto === 'cambio-pass') {
+      this.validarCodigoCambioPass(codigo);
     }
+  }
+
+  validarCodigoLogin(codigo: string) {
     this.authservice.loginConCodigo(codigo)
       .then(success => {
         if (success) {
           this.router.navigate(['/nuplinTV/inicio']);
         } else {
-          alert("Código incorrecto");
+          this.toastr.error('El codigo es incorrecto', 'Nuplin', {
+            timeOut: 3000,
+            positionClass: 'toast-top-right'
+          });
         }
       });
   }
+
+  validarCodigoCambioPass(codigo: string) {
+    const valTrue = this.authservice.verificarCodigo(codigo);
+    console.log(this.username)
+    if(valTrue){
+      this.authservice.actualizarPassword(this.email, this.newPass).then(success => {
+        if (success) {
+          this.toastr.success('Contraseña cambiada exitosamente. Inicia sesión con tu nueva contraseña.', 'Nuplin', {
+            timeOut: 3000,
+            positionClass: 'toast-top-right'
+          });
+          setTimeout(() => {
+            this.router.navigate(['/auth/login']);
+          }, 3500);
+        } else {
+          this.toastr.error('El usuario no existe', 'Nuplin', {
+            timeOut: 3000,
+            positionClass: 'toast-top-right'
+          });
+        }
+      });
+    }else{
+      this.toastr.error('El usuario no existe', 'Nuplin', {
+        timeOut: 3000,
+        positionClass: 'toast-top-right'
+      });
+    }
+}
 
   reSend(){
     alert(this.generarCodigo())
