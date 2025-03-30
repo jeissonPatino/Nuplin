@@ -25,7 +25,7 @@ export class HeaderComponent {
   collapse: any;
   closeResult = '';
   themeType: string | undefined;
-  dataUSer?: any = null;
+  dataUSer: any ;
   selectedItem: string  | null ='selectedItem'
   isOpen: boolean = false;
   constructor(
@@ -84,10 +84,6 @@ export class HeaderComponent {
         }
       });
     }
-
-  openSearch(search: any) {
-    // this.modalService.open(search);
-  }
   toggleSidebar() {
     let html = this.elementRef.nativeElement.ownerDocument.documentElement;
     if (html?.getAttribute('data-toggled') == 'true') {
@@ -170,6 +166,7 @@ export class HeaderComponent {
       );
     }
   }
+
   updateTheme() {
     
     let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -201,7 +198,6 @@ export class HeaderComponent {
  
   localStorageBackUp() {
     let styleId = document.querySelector('#style');
-  
     let html = document.querySelector('html');
     //Theme Color Mode:
     if (localStorage.getItem('xintraHeader') == 'dark') {
@@ -231,6 +227,7 @@ export class HeaderComponent {
     this.cartItemCount--;
     this.isCartEmpty = this.cartItemCount === 0;
   }
+
   removeNotify(rowId: string) {
     const rowElement = document.getElementById(rowId);
     if (rowElement) {
@@ -239,6 +236,7 @@ export class HeaderComponent {
     this.notificationCount--;
     this.isNotifyEmpty = this.notificationCount === 0;
   }
+
   handleCardClick(event: MouseEvent) {
     // Prevent the click event from propagating to the container
     event.stopPropagation();
@@ -251,9 +249,10 @@ export class HeaderComponent {
   public SearchResultEmpty: boolean = false;
 
   ngOnInit(): void {
-    this.autService.currentUser$.subscribe(user => {
+    const user = this.autService.isAuthenticated();
+    if (user) {
       this.dataUSer = user;
-    });
+    }
     this.updateTheme();
     const storedSelectedItem = localStorage.getItem('selectedItem');
     // this.updateSelectedItem();

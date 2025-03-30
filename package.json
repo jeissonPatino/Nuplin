@@ -30,8 +30,10 @@
     "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
     "dropzone": "^6.0.0-beta.2",
+    "file-saver": "^2.0.5",
     "filepond": "^4.32.7",
     "filepond-plugin-image-preview": "^4.6.12",
+    "jwt-decode": "^4.0.0",
     "moment": "^2.30.1",
     "ng-apexcharts": "^1.15.0",
     "ng-gallery": "^12.0.0",
@@ -52,6 +54,7 @@
     "swiper": "^11.1.14",
     "tailwindcss": "^3.4.15",
     "tslib": "^2.3.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
@@ -59,6 +62,7 @@
     "@angular/cli": "^19.0.0",
     "@angular/compiler-cli": "^19.0.0",
     "@types/crypto-js": "^4.2.2",
+    "@types/file-saver": "^2.0.7",
     "@types/jasmine": "~5.1.0",
     "@types/papaparse": "^5.3.15",
     "jasmine-core": "~5.4.0",

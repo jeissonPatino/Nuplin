@@ -5,6 +5,7 @@ import { routes } from './app.routes';
 import { BrowserModule } from '@angular/platform-browser';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { ToastrModule } from 'ngx-toastr';
+import { provideHttpClient } from '@angular/common/http';
 
 import { FlatpickrModule } from 'angularx-flatpickr';
 
@@ -15,6 +16,7 @@ export const appConfig: ApplicationConfig = {
      BrowserAnimationsModule,
      ColorPickerModule,
      ToastrModule.forRoot({timeOut: 15000,closeButton: true,progressBar: true,})
-    )
+    ),
+    provideHttpClient()
   ]
 };

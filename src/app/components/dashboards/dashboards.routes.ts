@@ -15,17 +15,17 @@ export const admin: Routes = [
 {
   path: 'gestion-usuarios/consulta',
   component: ConsultaUsuariosComponent, 
-  canActivate: [AuthGuard], data: { role: 'Cliente' }// Ruta para consulta de usuarios
+  canActivate: [AuthGuard], data: { role: 'user' }// Ruta para consulta de usuarios
 },
 {
   path: 'abonados/consulta',
   component: ConsultaAbonadosComponent, 
-  canActivate: [AuthGuard], data: { role: 'Admin' }// Ruta para consulta de abonados
+  canActivate: [AuthGuard], data: { role: 'admin' }// Ruta para consulta de abonados
 },
 {
   path: 'abonados/carga-masiva',
   component: CargaMasivaAbonadosComponent, 
-  canActivate: [AuthGuard], data: { role: 'Admin' }// Ruta para carga masiva de abonados
+  canActivate: [AuthGuard], data: { role: 'admin' }// Ruta para carga masiva de abonados
 },
 
 ]}

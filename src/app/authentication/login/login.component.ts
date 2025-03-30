@@ -63,6 +63,10 @@ constructor(
   }
 
   ngOnInit(): void {
+    const token = sessionStorage.getItem('JWT');
+    if(token){
+      this.authservice.logout();
+    }
     const script = document.createElement('script');
     script.src = `https://www.google.com/recaptcha/api.js?render=${environment.recaptchaSiteKey}`;
     script.async = true;
@@ -111,13 +115,20 @@ constructor(
 
   async validatinUser(loginForm: any){
     const encryptedPassword = this.encryptionService.encrypt({ username: loginForm.value.username, password: loginForm.value.password});
-    const userValidate = await this.authservice.validateUser(encryptedPassword)
-    if(userValidate){
-      this.authservice.setUser(this.loginForm);
-      this.router.navigate(['/auth/two-step-verification'],
-        { queryParams: { contexto: 'login' }}
-      );
-    }else{
+    const userValidate = await this.authservice.validateUser(encryptedPassword);
+    if (userValidate) {
+      const storedUser = sessionStorage.getItem('currentUser');
+      if (storedUser) {
+        const valStatus = await this.authservice.validateUserStatus(loginForm.value.username);
+        if (valStatus.active === 1) { 
+          this.router.navigate(['/auth/two-step-verification'], {
+            queryParams: { contexto: 'login' }
+          });
+        } else {
+          this.toastr.error('El usuario está inactivo', 'NuplinTv', { timeOut: 5000 });
+        }
+      }
+    } else {
       this.toastr.error('Las credenciales ingresadas no son correctas', 'NuplinTv', { timeOut: 5000 });
     }
   }

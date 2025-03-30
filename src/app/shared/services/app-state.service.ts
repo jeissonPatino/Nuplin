@@ -43,8 +43,8 @@ export class AppStateService {
   state$ = this.stateSubject.asObservable();
 
   private roleToBackgroundMap: { [key: string]: string } = {
-    'Admin': 'bgimg4',
-    'Cliente': 'bgimg5',
+    'admin': 'bgimg4',
+    'user': 'bgimg5',
     'Programador': '../public/assets/images/menu-bg-images/bg-img5.jpg',
     'Gerente': '../public/assets/images/menu-bg-images/bg-img5.jpg',
     'Marketing': '../public/assets/images/menu-bg-images/bg-img5.jpg',

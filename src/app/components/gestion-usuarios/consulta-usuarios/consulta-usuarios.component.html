@@ -13,30 +13,61 @@
                     <div class="box-title">
                         USUARIOS
                     </div>
-                    <button class="ti-btn ti-btn-icon ti-btn-sm ti-btn-soft-success" (click)="openCreateModal()">
-                        <i class="ri-user-add-line"></i>
-                    </button>
                 </div>
                 <div class="box-body">
-                    <div class="box-body space-y-3">
+                    <div class="box-body flex justify-center items-center">
                         <div class="form-group">
-                            <div class="input-group">
-                                <div class="input-group-text !text-textmuted dark:text-textmuted/50 !border-defaultborder dark:!border-defaultborder/10"> <i class="ri-calendar-line"></i> </div>
-                                <spk-flatpickr 
-                                    [placeholder]="'Selecciona un rango de fechas'" 
-                                    [mode]="'range'"
-                                    [altInput]="true"
-                                    [dateFormat]="'Y-m-d'"
-                                    [enableTime]="false"
-                                    class="form-control text-dark custom-datepickr">
-                                </spk-flatpickr>
+                            <div class="flex items-center space-x-3">
+                                <div class="relative flex items-center w-80">
+                                    <div class="input-group-text !text-textmuted dark:text-textmuted/50 !border-defaultborder dark:!border-defaultborder/10">
+                                        <i class="ri-calendar-line"></i>
+                                    </div>
+                                    <spk-flatpickr
+                                        [(ngModel)]="selectedDates"
+                                        [placeholder]="'Selecciona un rango de fechas'"
+                                        [mode]="'range'"
+                                        [altInput]="false"
+                                        [dateFormat]="'Y-m-d'"
+                                        [enableTime]="false"
+                                        class="pl-12 pr-3 py-2 border rounded-md w-full text-sm focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                        (ngModelChange)="onDateChange($event)"  ngDefaultControl>
+                                    </spk-flatpickr>
+                                </div>
+                                <button 
+                                    class="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
+                                    (click)="searchByDate()">
+                                    Buscar
+                                </button>
+                                <div class="relative inline-block">
+                                    <button 
+                                      (click)="togglePopover()" 
+                                      class="w-6 h-6 flex items-center justify-center bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full text-sm font-bold hover:bg-gray-400 dark:hover:bg-gray-500 transition">
+                                      ?
+                                    </button>
+                                    <div 
+                                      *ngIf="isPopoverOpen" 
+                                      class="absolute left-1/2 -translate-x-1/2 mt-2 w-64 p-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 z-10">
+                                      <p class="text-sm">Los datos mostrados corresponden a los últimos 30 días desde hoy. Puedes ajustar las fechas si necesitas otro período.</p>
+                                    </div>
+                                  </div>
                             </div>
                         </div>
                     </div>
-                    <div class="box-body space-y-3 flex justify-center mt-4">
-                        <span>
-                            {{ displayedRecords }} registros de {{ this.responsiveTables.length }}
-                        </span>
+                    
+                    
+                    <div class="box-body space-y-3 flex justify-between items-center mt-4">
+                        <div>  <span>
+                                {{ displayedRecords }} registros de {{ this.datosTablaUsuario.length }}
+                            </span>
+                        </div>
+                        <div> 
+                            <button class="ti-btn ti-btn-icon ti-btn-sm ti-btn-soft-success" (click)="openCreateModal()">
+                                <i class="ri-user-add-line"></i>
+                            </button>
+                            <button class="ti-btn ti-btn-sm ti-btn-info ml-2" (click)="exportToExcel()">
+                                Exportar a Excel
+                            </button>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <spk-reusable-tables [columns]="responsiveColumn"  tableHeadColumn="text-start"

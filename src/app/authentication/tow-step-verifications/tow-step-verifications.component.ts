@@ -47,10 +47,10 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
         this.router.navigate(['/auth/login']);
       }
     });
-
-    this.email = this.authservice.getUser() || 'Correo no disponible';
+    this.email = this.authservice.isAuthenticated() || 'Correo no disponible';
     if(this.email==='Correo no disponible'){
       this.router.navigate(['/auth/login']);
+
     }else{
       const [local, domain] = this.email.split('@');
       const oculto = local.slice(0, 3) + '****';
@@ -101,7 +101,6 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
 
   validarCodigoCambioPass(codigo: string) {
     const valTrue = this.authservice.verificarCodigo(codigo);
-    console.log(this.username)
     if(valTrue){
       this.authservice.actualizarPassword(this.email, this.newPass).then(success => {
         if (success) {

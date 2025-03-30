@@ -154,18 +154,9 @@ export class RememberPasswordComponent {
     }
     const encryptedPassword = this.encryptionService.encrypt({username:username});
     this.authservice.validateUserStatus(encryptedPassword).then(userValidation => {
-      this.userExists = userValidation.exists;
+     
       this.userActive = userValidation.active;
-      if (!userValidation.exists) {
-        this.toastr.error('El usuario no existe', 'Error', {
-          timeOut: 3000,
-          positionClass: 'toast-top-right'
-        });
-        this.resetPass.get('newPass')?.reset();
-        this.resetPass.get('confPass')?.reset();
-        this.resetPass.get('newPass')?.disable();
-        this.resetPass.get('confPass')?.disable();
-      } else if (!userValidation.active) {
+      if (!userValidation.active) {
         this.toastr.error('El usuario está inactivo', 'Error', {
           timeOut: 3000,
           positionClass: 'toast-top-right'
@@ -196,7 +187,6 @@ export class RememberPasswordComponent {
         queryParams: { contexto: 'cambio-pass', username: this.resetPass.get('username'), newPass: this.resetPass.get('newPass') }
         
       });
-      console.log(this.resetPass.get('username'))
     }
   }
 

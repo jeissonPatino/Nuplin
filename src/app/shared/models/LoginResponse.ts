@@ -1,4 +1,4 @@
-export interface User {
+export interface LoginResponse {
     sub: string;
     profile: string;
     userRegistered: string;
