@@ -9,49 +9,13 @@
 
 <!-- Start::Row-1 -->
 <div class="grid grid-cols-12 gap-x-6">
-    <div class="xl:col-span-4 col-span-12">
-        <div class="box overflow-hidden">
-            <div class="box-header justify-between">
-                <div class="box-title">
-                    Se propone agregar tarjetas con información importante
-                </div>
-                <a href="javascript:void(0);" class="ti-btn ti-btn-light btn-wave px-2 py-[0.26rem] text-textmuted dark:text-textmuted/50 waves-effect waves-light">View All</a>
+    <div class="xl:col-span-8 col-span-12">
+        <div class="grid grid-cols-12 gap-x-6">
+        @for(card of cardData;track $index){
+            <div class="xxl:col-span-3 xl:col-span-6 col-span-12">
+                <spk-sales-cards [card]="card"></spk-sales-cards>
             </div>
-            <div class="box-body">
-                <span>
-                    Lorem ipsum is a dummy text used in laying out print, graphic or web designs. It is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.
-                </span>
-            </div>
-        </div>
-    </div>
-    <div class="xl:col-span-4 col-span-12">
-        <div class="box overflow-hidden">
-            <div class="box-header justify-between">
-                <div class="box-title">
-                    Se propone agregar tarjetas con información importante 2
-                </div>
-                <a href="javascript:void(0);" class="ti-btn ti-btn-light btn-wave px-2 py-[0.26rem] text-textmuted dark:text-textmuted/50 waves-effect waves-light">View All</a>
-            </div>
-            <div class="box-body">
-                <span>
-                    Lorem ipsum is a dummy text used in laying out print, graphic or web designs. It is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.
-                </span>
-            </div>
-        </div>
-    </div>
-    <div class="xl:col-span-4 col-span-12">
-        <div class="box overflow-hidden">
-            <div class="box-header justify-between">
-                <div class="box-title">
-                    Se propone agregar tarjetas con información importante 3
-                </div>
-                <a href="javascript:void(0);" class="ti-btn ti-btn-light btn-wave px-2 py-[0.26rem] text-textmuted dark:text-textmuted/50 waves-effect waves-light">View All</a>
-            </div>
-            <div class="box-body">
-                <span>
-                    Lorem ipsum is a dummy text used in laying out print, graphic or web designs. It is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.
-                </span>
-            </div>
+        }
         </div>
     </div>
 </div>

@@ -175,14 +175,14 @@ export class RememberPasswordComponent {
   }
 
   Submit(){
-    if (!this.userExists || !this.userActive) {
+    if (this.userExists || this.userActive) {
       this.toastr.warning('Redirigiendo al login...', 'Información', {
         timeOut: 3000,
         positionClass: 'toast-top-right'
       });
       this.router.navigate(['/authentication/login']);
     } else {
-      this.authservice.setUser(this.resetPass);
+      //this.authservice.setUser(this.resetPass);
       this.router.navigate(['/auth/two-step-verification'], { 
         queryParams: { contexto: 'cambio-pass', username: this.resetPass.get('username'), newPass: this.resetPass.get('newPass') }
         

@@ -4,6 +4,7 @@ import { ConsultaUsuariosComponent } from '../gestion-usuarios/consulta-usuarios
 import { ConsultaAbonadosComponent } from '../abonados/consulta-abonados/consulta-abonados.component';
 import { CargaMasivaAbonadosComponent } from '../abonados/carga-masiva-abonados/carga-masiva-abonados.component';
 import { AuthGuard } from '../../guards/auth.guard';
+import { LogDisplayComponent } from '../log-display/log-display.component';
 
 export const admin: Routes = [
  {path:'nuplinTV',children:[ {
@@ -27,7 +28,11 @@ export const admin: Routes = [
   component: CargaMasivaAbonadosComponent, 
   canActivate: [AuthGuard], data: { role: 'admin' }// Ruta para carga masiva de abonados
 },
-
+{
+  path: 'log/log-usuarios',
+  component: LogDisplayComponent, 
+  canActivate: [AuthGuard], data: { role: 'admin' }// Ruta para carga masiva de abonados
+},
 ]}
 ];
 @NgModule({

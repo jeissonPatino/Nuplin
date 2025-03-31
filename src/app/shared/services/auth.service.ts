@@ -19,7 +19,7 @@ export class AuthService {
   private email: string | null = null;
   private pass: string | null = null;
   private codigo: string = '';
-
+  apiUrl:string = environment.ApiUrl;
   constructor( 
       private http: HttpClient,
       private router: Router, 
@@ -83,43 +83,40 @@ export class AuthService {
     }, WARNING_TIME);
     this.inactivityTimeout = setTimeout(() => this.logout(), this.INACTIVITY_LIMIT);
   }
-
-  async validateUser(formUser: any): Promise<boolean> {
+  //el usuario ingresa correo y contraseña
+  async validateUser(formUser: any): Promise<any> { // Cambiado el tipo de retorno
     try {
       let [password, email] = this.encryptionService.decrypt(formUser).split('&');
       try {
-        const response = await this.http.post<LoginResponse>(`${environment.ApiUrl}user/login`, { formUser } ).toPromise();
+        const response = await this.http.post<LoginResponse>(`${this.apiUrl}user/login`, { formUser } ).toPromise();
         if (response) {
-          const { token, ...userData } = response; 
-          this.encryptionService.encryptUser({user: userData});
-          sessionStorage.setItem('JWT', token );
-          sessionStorage.setItem('sessionStartTime', Date.now().toString());
-          return this.verificarToken();
+          
+          return { token: response.token, userData: response };
         }
       } catch (backendError) {
         console.warn('El backend no está disponible, buscando localmente...');
         const user = this.users.find(u => u.email === email && u.password === password);
         if (user) {
-          const { token, ...userData } = user; 
-          this.encryptionService.encryptUser({user: userData});
-          sessionStorage.setItem('JWT', token );
-          sessionStorage.setItem('sessionStartTime', Date.now().toString());
-          return this.verificarToken();
+          return { token: user.token, userData: user };
         }
       }
     } catch (error) {
       console.error('Error al validar usuario:', error);
     }
-    return false;
+    return null; //  Indicar fallo
   }
 
-  async validateUserStatus(username: string): Promise<{  active: number }>{
-    return new Promise((resolve) => {
-      const status = this.encryptionService.decryptUser().split('&')[2];
-      resolve({
-        active: status ? Number(status) : 0 
+  // se valida si el usuario esta activo o no
+  async validateUserStatus(username: string): Promise<{ active: number }> {
+    if (username === this.encryptionService.decryptUser().split('&')[0]) {
+      return new Promise((resolve) => {
+        const status = this.encryptionService.decryptUser().split('&')[2];
+        resolve({
+          active: status ? Number(status) : 0,
+        });
       });
-    });
+    }
+    return Promise.resolve({ active: 0 });
   }
 
   async loginConCodigo(codigo: string): Promise<boolean> {
@@ -130,16 +127,7 @@ export class AuthService {
     });
   }
 
-  logout(): void {
-    this.toastr.warning('Cerrando su sesión', 'NuplinTv', { timeOut: 5000 });
-    sessionStorage.removeItem('JWT');
-    sessionStorage.removeItem('currentUser');
-    sessionStorage.removeItem('sessionStartTime');
-    setTimeout(() => {
-      this.router.navigate(['/auth/login']).then(() => window.location.reload());
-    }, 5500);
-  }
-
+  //Se toma el usuario en sesion
   isAuthenticated(): any {
     let username= this.encryptionService.decryptUser().split('&')[0];
     if (!username) return false;
@@ -151,6 +139,7 @@ export class AuthService {
     }
   }
 
+  //se obtiene el rol del usuario
   getUserRole(): string | null {
     let userType = this.encryptionService.decryptUser().split('&')[1];
     if (!userType) return null;
@@ -162,10 +151,10 @@ export class AuthService {
     }
   }
 
-  verificarToken(): boolean {
-    const token = sessionStorage.getItem('JWT');
+  //El token JWK 
+  verificarToken(token: string, email: string): boolean {
     if (!token) {
-      console.error('No se encontró el token en sessionStorage');
+      console.error('No se encontró el token.');
       return false;
     }
     const decoded = this.encryptionService.decodeToken(token);
@@ -173,30 +162,19 @@ export class AuthService {
       console.error('Error al decodificar el token o el "sub" no existe.');
       return false;
     }
-    const decryptedData = this.encryptionService.decryptUser();
-    const email = decryptedData.split('&')[0]; 
     return email === decoded.sub;
   }
 
-  verificarCodigo(code: string): boolean {
-    const token = sessionStorage.getItem('JWT');
-    if (!token) {
-      console.error('No se encontró el token en sessionStorage');
-      return false;
-    }
-    const decoded = this.encryptionService.decodeToken(token);
-    return true;
+  verificarCodigo(code: string): Promise<boolean> {
+    return Promise.resolve(this.codigo === code);
+  }
+  
+  sendEmailCodeVerification(email: string) {
+    const url = `${this.apiUrl}auth/dobleAuth`;
+    return this.http.post<string>(url, { email });
   }
 
-  setUser(user: any) {
-    this.email = user.value.username;
-    this.pass = user.value.password;
-  }
-
-  sendEmailCodeVerification(code: string) {
-    this.codigo = code;
-  }
-
+  //Generacion de pass Automatico se usa en el reset pass y el update 
   generarPassword(): string {
     const caracteres = 'abcdefghijklmnopqrstuvwxyz';
     const mayusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -213,6 +191,7 @@ export class AuthService {
     return password.split('').sort(() => 0.5 - Math.random()).join('');
   }
 
+  // Actualizar la contarseña
   actualizarPassword(username: string, newPassword: string): Promise<boolean> {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -226,6 +205,16 @@ export class AuthService {
         }
       }, 3000);
     });
+  }
+
+  logout(): void {
+    this.toastr.warning('Cerrando su sesión', 'NuplinTv', { timeOut: 5000 });
+    sessionStorage.removeItem('JWT');
+    sessionStorage.removeItem('currentUser');
+    sessionStorage.removeItem('sessionStartTime');
+    setTimeout(() => {
+      this.router.navigate(['/auth/login']).then(() => window.location.reload());
+    }, 5500);
   }
 
   

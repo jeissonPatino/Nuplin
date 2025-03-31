@@ -89,7 +89,14 @@ constructor(
       this.toastr.error('Error con reCAPTCHA, intenta nuevamente', 'NuplinTv', { timeOut: 3000 });
       return;
     }
-    this.validatinUser(this.loginForm)
+    const loginResult = await this.validatinUser(this.loginForm);
+    if (loginResult) {
+      this.router.navigate(['/auth/two-step-verification'], {
+        queryParams: { contexto: 'login', email: this.loginForm.value.username, token: loginResult.token }
+      });
+    } else {
+      this.toastr.error('Las credenciales ingresadas no son correctas', 'NuplinTv', { timeOut: 5000 });
+    }
   }
 
   async verifyRecaptcha() {
@@ -113,23 +120,13 @@ constructor(
     return true;
   }
 
-  async validatinUser(loginForm: any){
-    const encryptedPassword = this.encryptionService.encrypt({ username: loginForm.value.username, password: loginForm.value.password});
+  async validatinUser(loginForm: any): Promise<any> {
+    const encryptedPassword = this.encryptionService.encrypt({ username: loginForm.value.username, password: loginForm.value.password });
     const userValidate = await this.authservice.validateUser(encryptedPassword);
     if (userValidate) {
-      const storedUser = sessionStorage.getItem('currentUser');
-      if (storedUser) {
-        const valStatus = await this.authservice.validateUserStatus(loginForm.value.username);
-        if (valStatus.active === 1) { 
-          this.router.navigate(['/auth/two-step-verification'], {
-            queryParams: { contexto: 'login' }
-          });
-        } else {
-          this.toastr.error('El usuario está inactivo', 'NuplinTv', { timeOut: 5000 });
-        }
-      }
+      return userValidate;
     } else {
-      this.toastr.error('Las credenciales ingresadas no son correctas', 'NuplinTv', { timeOut: 5000 });
+      return null;
     }
   }
 

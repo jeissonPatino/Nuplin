@@ -20,13 +20,18 @@
             <button (click)="mostrarModal()" class="bg-blue-500 text-white px-4 py-2 rounded-md mb-4">
                 📄 Ver instrucciones 
             </button>
+            <button
+                (click)="cargarDatosMasivamente()"
+                [disabled]="!csvDataReady"  class="bg-green-500 text-white px-4 py-2 rounded-md mb-4 ml-4">
+                Cargar Datos Masivamente
+            </button>
         </div>
         <div class="box-body space-y-3 flex justify-center mt-4">
             <span>
                 {{ displayedRecords }} registros de {{ this.responsiveTables.length }}
             </span>
         </div>
-        <div class="table-responsive">
+        <div class="table-responsive" *ngIf="csvDataReady">
             <spk-reusable-tables [columns]="responsiveColumn"  tableHeadColumn="text-start"
             trClass="border-b  border-defaultborder dark:border-defaultborder/10"
             tableClass="ti-custom-table whitespace-nowrap min-w-full"  [showCheckbox]="false">
@@ -35,16 +40,19 @@
                 <tr>
                     <td>
                         <div class="flex items-center">
-                            {{table.name}}
+                            {{table.Nombre}}
                         </div>
                     </td>
-                    <td>{{table.mail}}</td>
-                    <td>{{table.pack}}</td>
-                    <td>{{table.dateActivation}}</td>
-                    <td><span class="badge bg-{{table.bg}}-transparent">{{table.periody}}</span></td>
+                    <td>{{ table.Email }}</td>
+                    <td>{{ table.Paquete }}</td>
+                    <td>{{ table.Activo_hasta }}</td>
+                    <td>{{ table.Canales_adicionales}}</td>
                 </tr>
                 }
             </spk-reusable-tables>
+        </div>
+        <div *ngIf="!csvDataReady" class="text-center mt-4">
+            Por favor, cargue un archivo CSV para ver los datos.
         </div>
         <!-- Pagination -->
         <div class="flex justify-center mt-4">

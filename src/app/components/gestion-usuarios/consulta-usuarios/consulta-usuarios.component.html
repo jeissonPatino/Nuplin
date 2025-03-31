@@ -17,7 +17,7 @@
                 <div class="box-body">
                     <div class="box-body flex justify-center items-center">
                         <div class="form-group">
-                            <div class="flex items-center space-x-3">
+                            <div class="flex items-center space-x-5">
                                 <div class="relative flex items-center w-80">
                                     <div class="input-group-text !text-textmuted dark:text-textmuted/50 !border-defaultborder dark:!border-defaultborder/10">
                                         <i class="ri-calendar-line"></i>
@@ -32,6 +32,21 @@
                                         class="pl-12 pr-3 py-2 border rounded-md w-full text-sm focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                                         (ngModelChange)="onDateChange($event)"  ngDefaultControl>
                                     </spk-flatpickr>
+                                    
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="space-y-3">
+                                        <spk-ng-select 
+                                                [options]="Planes"
+                                                [selectClass]="'max-w-md'"
+                                                [clearable]="true"
+                                                [multi]="false"
+                                                [searchable]="false"
+                                                [placeholder]="'Seleccione un Paquete'"
+                                                [additionalProperties]="{}"
+                                                (change)="handleSelectChange($event)">
+                                        </spk-ng-select>
+                                    </div>
                                 </div>
                                 <button 
                                     class="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
@@ -47,7 +62,7 @@
                                     <div 
                                       *ngIf="isPopoverOpen" 
                                       class="absolute left-1/2 -translate-x-1/2 mt-2 w-64 p-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 z-10">
-                                      <p class="text-sm">Los datos mostrados corresponden a los últimos 30 días desde hoy. Puedes ajustar las fechas si necesitas otro período.</p>
+                                      <p class="text-sm">Los datos en pantalla muestran todos los registros existentes hasta la fecha actual, incluyendo todos los paquetes disponibles. Puedes usar los filtros para ajustar la visualización según tus necesidades.</p>
                                     </div>
                                   </div>
                             </div>
@@ -135,16 +150,3 @@
     </div>
     <!-- End:: Table Usuarios -->
 
-<app-modal-usuarios 
-    *ngIf="showModal"
-    [title]="isEditing ? 'Editar Usuario' : 'Crear Usuario'"
-    [data]="selectedUser"
-    (closeModal)="closeModal()"
-    (onSave)="handleSave($event)">
-        <div>
-            <label class="block text-sm">Nombre</label>
-            <input type="text" [(ngModel)]="selectedUser.name" class="w-full border p-2 rounded" />
-            <label class="block text-sm mt-2">Correo</label>
-            <input type="email" [(ngModel)]="selectedUser.email" class="w-full border p-2 rounded" />
-        </div>
-</app-modal-usuarios>

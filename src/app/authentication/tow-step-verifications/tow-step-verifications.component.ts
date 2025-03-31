@@ -34,28 +34,35 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
   contexto: string = '';
   username: string = '';
   newPass: string = '';
-
+  codigoRecibido: string = '';
 
 
   ngOnInit(): void {
-
     this.route.queryParams.subscribe(params => {
       this.contexto = params['contexto'];
       this.username = params['username'] || '';
       this.newPass = params['newPass'] || '';
+      this.email = params['email'] || ''; // Obtener el email de los parámetros
       if (this.contexto === 'cambio-pass' && (!this.username || !this.newPass)) {
         this.router.navigate(['/auth/login']);
       }
     });
-    this.email = this.authservice.isAuthenticated() || 'Correo no disponible';
-    if(this.email==='Correo no disponible'){
+  
+    if (!this.email) {
       this.router.navigate(['/auth/login']);
-
-    }else{
+    } else {
       const [local, domain] = this.email.split('@');
       const oculto = local.slice(0, 3) + '****';
-      this.newmail = `${oculto}@${domain}`
-      alert(this.generarCodigo())
+      this.newmail = `<span class="math-inline">\{oculto\}@</span>{domain}`;
+      this.authservice.sendEmailCodeVerification(this.email).subscribe(
+        (codigo) => {
+          this.codigoRecibido = codigo;
+        },
+        (error) => {
+          this.toastr.error('Error al enviar el código de verificación.', 'Error');
+          this.router.navigate(['/auth/login']);
+        }
+      );
     }
   }
   
@@ -89,6 +96,8 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
     this.authservice.loginConCodigo(codigo)
       .then(success => {
         if (success) {
+          sessionStorage.setItem('JWT', this.route.snapshot.queryParams['token']);
+          sessionStorage.setItem('sessionStartTime', Date.now().toString());
           this.router.navigate(['/nuplinTV/inicio']);
         } else {
           this.toastr.error('El codigo es incorrecto', 'Nuplin', {
@@ -100,40 +109,46 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
   }
 
   validarCodigoCambioPass(codigo: string) {
-    const valTrue = this.authservice.verificarCodigo(codigo);
-    if(valTrue){
-      this.authservice.actualizarPassword(this.email, this.newPass).then(success => {
-        if (success) {
-          this.toastr.success('Contraseña cambiada exitosamente. Inicia sesión con tu nueva contraseña.', 'Nuplin', {
-            timeOut: 3000,
-            positionClass: 'toast-top-right'
+    this.authservice.verificarCodigo(codigo) 
+      .then(isValid => {
+        if (isValid) {
+          this.authservice.actualizarPassword(this.email, this.newPass).then(success => {
+            if (success) {
+              this.toastr.success('Contraseña cambiada exitosamente. Inicia sesión con tu nueva contraseña.', 'Nuplin', {
+                timeOut: 3000,
+                positionClass: 'toast-top-right'
+              });
+              setTimeout(() => {
+                this.router.navigate(['/auth/login']);
+              }, 3500);
+            } else {
+              this.toastr.error('El usuario no existe', 'Nuplin', {
+                timeOut: 3000,
+                positionClass: 'toast-top-right'
+              });
+            }
           });
-          setTimeout(() => {
-            this.router.navigate(['/auth/login']);
-          }, 3500);
         } else {
-          this.toastr.error('El usuario no existe', 'Nuplin', {
+          this.toastr.error('El codigo es incorrecto', 'Nuplin', {
             timeOut: 3000,
             positionClass: 'toast-top-right'
           });
         }
       });
-    }else{
-      this.toastr.error('El usuario no existe', 'Nuplin', {
-        timeOut: 3000,
-        positionClass: 'toast-top-right'
-      });
+  }
+
+reSend(){
+  this.authservice.sendEmailCodeVerification(this.email).subscribe(
+    (codigo) => {
+      this.codigoRecibido = codigo;  //  Actualizar el código almacenado
+      this.toastr.success('El código se ha reenviado exitosamente.', 'Información');
+    },
+    (error) => {
+      this.toastr.error('Error al reenviar el código.', 'Error');
     }
+  );
 }
 
-  reSend(){
-    alert(this.generarCodigo())
-  }
-
-  generarCodigo(): string {
-    const generateCode =  Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('');
-    this.authservice.sendEmailCodeVerification(generateCode);
-    return generateCode;
-  }
+  
 
 }
