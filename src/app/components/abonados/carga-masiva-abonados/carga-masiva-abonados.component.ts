@@ -8,11 +8,13 @@ import { SpkReusableTablesComponent } from '../../../../@spk/spk-reusable-tables
 import { AuthService } from '../../../shared/services/auth.service';
 import { GestionUsuariosService } from '../../../shared/services/gestion-usuarios.service';
 import { DatosAbonadoCSV } from '../../../shared/models/DatosAbonadoCSV.model';
+import { EncryptionService } from '../../../shared/services/encryption.service';
+import { LogUsuarioService } from '../../../shared/services/log-usuario.service';
 
 @Component({
   selector: 'app-carga-masiva-abonados',
   standalone: true,
-  imports: [CommonModule, FilePondModule, SpkReusableTablesComponent], // 👈 Importa FilePondModule aquí
+  imports: [CommonModule, FilePondModule, SpkReusableTablesComponent],
   templateUrl: './carga-masiva-abonados.component.html',
   styleUrl: './carga-masiva-abonados.component.scss'
 })
@@ -21,7 +23,9 @@ export class CargaMasivaAbonadosComponent implements AfterViewInit {
   constructor(
       private toastr: ToastrService ,
       private authService: AuthService,
-      private gestionUsuariosService: GestionUsuariosService
+      private gestionUsuariosService: GestionUsuariosService,
+      private encryptionService: EncryptionService,
+      private LogUsuarioService: LogUsuarioService,
   ){}
 
   modalVisible = false;
@@ -94,11 +98,11 @@ export class CargaMasivaAbonadosComponent implements AfterViewInit {
 
     if (datosValidos) {
       this.responsiveTables = data;
-      this.csvDataReady = true;  // Habilitar el botón
+      this.csvDataReady = true;
       this.updatePaginatedData();
     } else {
       this.toastr.error('El archivo CSV contiene errores. Por favor, corríjalos.', 'Error', { timeOut: 5000 });
-      this.csvDataReady = false; // Deshabilitar el botón
+      this.csvDataReady = false;
       this.responsiveTables = [];
       this.paginatedData = [];
       this.totalPagesArray = [];
@@ -162,25 +166,28 @@ export class CargaMasivaAbonadosComponent implements AfterViewInit {
         (codigo) => {
           const userCode = prompt('Por favor, ingrese el código de verificación enviado a su correo:');
           if (userCode === codigo) {
-            console.log('Código de verificación correcto. Cargando datos...', this.responsiveTables);
-            // Llama a tu servicio para cargar los datos
-            this.gestionUsuariosService.createUser(this.transformDataForAPI(this.responsiveTables)).subscribe(  // ¡Usar el servicio!
+            this.gestionUsuariosService.createUser(this.transformDataForAPI(this.responsiveTables)).subscribe(
               (response) => {
-                this.toastr.success('Datos cargados exitosamente.', 'Éxito');  // Manejar éxito
+                this.toastr.success('Datos cargados exitosamente.', 'Éxito');
+                this.crearLog('Carga Masiva', 'Datos cargados exitosamente.', 'INFO', 'ABONADOS');
               },
               (error) => {
-                this.toastr.error('Error al cargar los datos.', 'Error');  // Manejar error
+                this.toastr.error('Error al cargar los datos.', 'Error');
+                this.crearLog('Carga Masiva', 'Error al cargar los datos.'+error, 'ERROR', 'ABONADOS');
               }
             );
           } else {
             this.toastr.error('Código de verificación incorrecto.', 'Error');
+            this.crearLog('Carga Masiva', 'Código de verificación incorrecto.', 'ERROR', 'ABONADOS');
           }
         },
         (error) => {
           this.toastr.error('Error al enviar el código de verificación.', 'Error');
+          this.crearLog('Carga Masiva', 'Error al enviar el código de verificación.'+error, 'ERROR', 'ABONADOS');
         }
       );
   }
+
   transformDataForAPI(data: DatosAbonadoCSV[]): any[] {
     return data.map(item => ({
       nombre: item.Nombre,
@@ -191,5 +198,17 @@ export class CargaMasivaAbonadosComponent implements AfterViewInit {
       activoHasta: item.Activo_hasta,
       canalesAdicionales: item.Canales_adicionales
     }));
+  }
+
+  private crearLog(accion: string, descripcion: string, logLevel: string, moduloOrigen: string) {
+    const email = this.encryptionService.decryptUser().split('&')[1];
+    if (email !== null) {
+      const mensaje = descripcion;
+      const detalles = `${accion} - ${descripcion}`;
+      this.LogUsuarioService.crearLog(email, logLevel, moduloOrigen, mensaje, detalles).subscribe({
+        next: (log) => console.log('Log creado correctamente:', log),
+        error: (err) => console.error('Error al crear log:', err)
+      });
+    }
   }
 }

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { EncryptionService } from './encryption.service';
 import { User } from '../models/user.model';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { LoginResponse } from '../models/LoginResponse';
 import { ToastrService } from 'ngx-toastr';
 
@@ -88,7 +88,7 @@ export class AuthService {
     try {
       let [password, email] = this.encryptionService.decrypt(formUser).split('&');
       try {
-        const response = await this.http.post<LoginResponse>(`${this.apiUrl}user/login`, { formUser } ).toPromise();
+        const response = await this.http.post<LoginResponse>(`${this.apiUrl}auth/login`, { formUser } ).toPromise();
         if (response) {
           
           return { token: response.token, userData: response };
@@ -171,7 +171,9 @@ export class AuthService {
   
   sendEmailCodeVerification(email: string) {
     const url = `${this.apiUrl}auth/dobleAuth`;
-    return this.http.post<string>(url, { email });
+    const headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
+    const body = new HttpParams().set('email', email);
+    return this.http.post<string>(url, body.toString(), { headers });
   }
 
   //Generacion de pass Automatico se usa en el reset pass y el update 

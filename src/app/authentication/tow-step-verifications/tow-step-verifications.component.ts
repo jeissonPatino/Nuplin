@@ -2,6 +2,8 @@ import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, 
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../shared/services/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { EncryptionService } from '../../shared/services/encryption.service';
+import { LogUsuarioService } from '../../shared/services/log-usuario.service';
 
 @Component({
   selector: 'app-tow-step-verifications',
@@ -14,7 +16,9 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute, 
     private router: Router,
     public authservice: AuthService,
-     private toastr: ToastrService ,
+    private toastr: ToastrService ,
+    private encryptionService: EncryptionService,
+    private LogUsuarioService: LogUsuarioService,
 ){
     document.body.classList.add('authentication-background');
   }
@@ -60,6 +64,7 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
         },
         (error) => {
           this.toastr.error('Error al enviar el código de verificación.', 'Error');
+          this.crearLog('Doble autenticación', 'Error al enviar el código de verificación.'+error, 'ERROR', 'TWO-STEP');
           this.router.navigate(['/auth/login']);
         }
       );
@@ -98,8 +103,10 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
         if (success) {
           sessionStorage.setItem('JWT', this.route.snapshot.queryParams['token']);
           sessionStorage.setItem('sessionStartTime', Date.now().toString());
+          this.crearLog('LOGIN', 'Usuario autenticado correctamente', 'INFO', 'LOGIN');
           this.router.navigate(['/nuplinTV/inicio']);
         } else {
+          this.crearLog('LOGIN', 'Ocurrió un error con la autenticación', 'ERROR', 'LOGIN');
           this.toastr.error('El codigo es incorrecto', 'Nuplin', {
             timeOut: 3000,
             positionClass: 'toast-top-right'
@@ -140,15 +147,28 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
 reSend(){
   this.authservice.sendEmailCodeVerification(this.email).subscribe(
     (codigo) => {
-      this.codigoRecibido = codigo;  //  Actualizar el código almacenado
+      this.codigoRecibido = codigo;
       this.toastr.success('El código se ha reenviado exitosamente.', 'Información');
+      this.crearLog('Doble autenticación', 'El código se ha reenviado exitosamente.', 'INFO', 'TWO-STEP');
     },
     (error) => {
       this.toastr.error('Error al reenviar el código.', 'Error');
+      this.crearLog('Doble autenticación', 'Error al reenviar el código.'+error, 'INFO', 'TWO-STEP');
     }
   );
 }
 
-  
+private crearLog(accion: string, descripcion: string, logLevel: string, moduloOrigen: string) {
+  const email = this.encryptionService.decryptUser().split('&')[1];
+  if (email !== null) {
+    const mensaje = descripcion;
+    const detalles = `${accion} - ${descripcion}`;
+    this.LogUsuarioService.crearLog(email, logLevel, moduloOrigen, mensaje, detalles).subscribe({
+      next: (log) => console.log('Log creado correctamente:', log),
+      error: (err) => console.error('Error al crear log:', err)
+    });
+  }
+}
+
 
 }

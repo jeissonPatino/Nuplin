@@ -13,18 +13,21 @@ export class LogUsuarioService {
 
   /**
    * Crea una nueva entrada de log.
-   * @param usuarioId El ID del usuario que realizó la acción.
+   * @param emialUsuario El ID del usuario que realizó la acción.
    * @param descripcion La descripción de la acción.
    * @param tipo Opcional: El tipo de acción.
    * @returns Un Observable que emite la respuesta del servidor (puede ser el log creado).
    */
 
-  crearLog(usuarioId: number, descripcion: string, tipo?: string): Observable<LogUsuario> {
+  crearLog(emialUsuario: string, logLevel: string, moduloOrigen: string, mensaje: string, detalles: string): Observable<LogUsuario> {
     const logEntry: LogUsuario = {
-      usuarioId: usuarioId,
-      descripcion: descripcion
+      emialUsuario: emialUsuario,
+      logLevel: logLevel,
+      moduloOrigen: moduloOrigen,
+      mensaje: mensaje,
+      detalles:detalles
     };
-    return this.http.post<LogUsuario>(this.apiUrl, logEntry);
+    return this.http.post<LogUsuario>(`${this.apiUrl}/crea`, logEntry);
   }
 
   /**

@@ -1,4 +1,7 @@
 export interface LogUsuario{
-    usuarioId: number;    
-    descripcion: string; 
+    emialUsuario: string; 
+    logLevel: string;  
+    moduloOrigen: string;  
+    mensaje: string; 
+    detalles: string; 
 }

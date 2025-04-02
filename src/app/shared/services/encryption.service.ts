@@ -24,10 +24,11 @@ export class EncryptionService {
   }
 
   encryptUser(value: {user: any}): void {
+    let idUser =   value.user.email
     let username = value.user.email;
     let userType = value.user.userType;
     let status = value.user.status;
-    const dataChainUser = username+'&'+userType+'&'+status;
+    const dataChainUser = idUser+'&'+username+'&'+userType+'&'+status;
     let objUser = CryptoJS.AES.encrypt(dataChainUser, this.secretKey).toString();
     sessionStorage.setItem('currentUser', objUser );
   }

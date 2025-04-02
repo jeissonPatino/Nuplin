@@ -13,6 +13,8 @@ import { Subject, takeUntil } from 'rxjs';
 import { SpkReusableTablesComponent } from '../../../../@spk/spk-reusable-tables/spk-reusable-tables.component';
 import FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
+import { EncryptionService } from '../../../shared/services/encryption.service';
+import { LogUsuarioService } from '../../../shared/services/log-usuario.service';
 
 @Component({
   selector: 'app-consulta-usuarios',
@@ -55,7 +57,9 @@ export class ConsultaUsuariosComponent implements OnInit, OnDestroy {
 
   constructor(
     private toastr: ToastrService,
-    private gestionUsuariosService: GestionUsuariosService // Inyecta el servicio
+    private gestionUsuariosService: GestionUsuariosService,
+    private encryptionService: EncryptionService,
+    private LogUsuarioService: LogUsuarioService,
   ) {}
 
   ngOnInit() {
@@ -73,10 +77,12 @@ export class ConsultaUsuariosComponent implements OnInit, OnDestroy {
         (data: Usuario[]) => {
           this.datosTablaUsuario = data;
           this.updatePaginatedData();
+          this.crearLog('Consulta Usuarios', 'Datos obtenidos con exito', 'INFO', 'GESTION USUARIOS');
         },
         (error) => {
           this.toastr.error('Error al cargar los usuarios.', 'Error');
-          console.error(error);
+          this.crearLog('Consulta Usuarios', 'Error al cargar los usuarios.'+error, 'ERROR', 'GESTION USUARIOS');
+          
         }
       );
   }
@@ -129,14 +135,17 @@ export class ConsultaUsuariosComponent implements OnInit, OnDestroy {
         (updatedUsers: Usuario[]) => {
           if (updatedUsers && updatedUsers.length > 0) {
             this.toastr.success('Usuario actualizado correctamente.', 'Éxito');
-            this.loadUsers(); // Recargar los usuarios para mostrar los cambios
+            this.crearLog('Actualizar Usuarios', 'Usuario actualizado correctamente.', 'INFO', 'GESTION USUARIOS');
+            this.loadUsers();
           } else {
             this.toastr.error('Error al actualizar el usuario.', 'Error');
+            this.crearLog('Actualizar Usuarios', 'Error al actualizar el usuario.', 'ERROR', 'GESTION USUARIOS');
           }
         },
         (error) => {
           this.toastr.error('Error al actualizar el usuario.', 'Error');
-          console.error(error);
+          this.crearLog('Actualizar Usuarios', 'Error al actualizar el usuario.'+error, 'ERROR', 'GESTION USUARIOS');
+          
         }
       );
     } else {
@@ -144,14 +153,16 @@ export class ConsultaUsuariosComponent implements OnInit, OnDestroy {
         (newUsers: Usuario[]) => {
           if (newUsers && newUsers.length > 0) {
             this.toastr.success('Usuario creado correctamente.', 'Éxito');
+            this.crearLog('Crear Usuarios', 'Usuario creado correctamente.', 'INFO', 'GESTION USUARIOS');
             this.loadUsers();
           } else {
             this.toastr.error('Error al crear el usuario.', 'Error');
+            this.crearLog('Crear Usuarios', 'Error al crear el usuario.', 'ERROR', 'GESTION USUARIOS');
           }
         },
         (error) => {
           this.toastr.error('Error al crear el usuario.', 'Error');
-          console.error(error);
+          this.crearLog('Crear Usuarios', 'Error al crear el usuario.'+error, 'ERROR', 'GESTION USUARIOS');
         }
       );
     }
@@ -200,5 +211,18 @@ export class ConsultaUsuariosComponent implements OnInit, OnDestroy {
   private saveAsExcelFile(buffer: any, fileName: string): void {
     const data: Blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
     FileSaver.saveAs(data, fileName + '.xlsx');
+  }
+
+
+  private crearLog(accion: string, descripcion: string, logLevel: string, moduloOrigen: string) {
+    const email = this.encryptionService.decryptUser().split('&')[1];
+    if (email !== null) {
+      const mensaje = descripcion;
+      const detalles = `${accion} - ${descripcion}`;
+      this.LogUsuarioService.crearLog(email, logLevel, moduloOrigen, mensaje, detalles).subscribe({
+        next: (log) => console.log('Log creado correctamente:', log),
+        error: (err) => console.error('Error al crear log:', err)
+      });
+    }
   }
 }

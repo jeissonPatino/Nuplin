@@ -22,7 +22,7 @@ constructor(
 ){}
 
 getUsuarios(fechaInicio: string, fechaFin: string, paquete?: string): Observable<any> {
-    let url = `${this.apiUrl}?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
+    let url = `${this.apiUrl}?fechaInicial=${fechaInicio}&fechaFinal=${fechaFin}`;
     if (paquete) {
       url += `&paquete=${paquete}`;
     }
@@ -31,19 +31,17 @@ getUsuarios(fechaInicio: string, fechaFin: string, paquete?: string): Observable
 
   // Actualizar uno o varios usuarios
   updateUser(listaUsuarios: any[]): Observable<any> {
-    return this.http.post(`${this.apiUrl}/actualizar`, listaUsuarios);
-  }
+    return this.http.put(`${this.apiUrl}/actualizar`, listaUsuarios);
+}
 
   // Crear uno o varios usuarios
   createUser(listaUsuarios: any[]): Observable<any> {
-    return this.http.post(`${this.apiUrl}/crear `, listaUsuarios);
+    return this.http.post(`${this.apiUrl}/crear`, listaUsuarios);
   }
 
   // Eliminar usuarios por lista de IDs
   deleteUser(listaIDUsuarios: number[]): Observable<any> {
-    return this.http.post(`${this.apiUrl}/desactivar`, { ids: listaIDUsuarios });
-  }
-
-  
+    return this.http.put(`${this.apiUrl}/desactivar`, listaIDUsuarios);
+}
 
 }

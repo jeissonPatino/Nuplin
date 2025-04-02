@@ -51,7 +51,7 @@ export class LogDisplayComponent {
       (data) => {
         this.logs = data;
         this.totalLogs = data.length;
-        this.paginateData(); // Inicializar paginatedData
+        this.paginateData();
       },
       (err) => {
         this.error = 'Error al cargar los logs. Intente nuevamente.';
