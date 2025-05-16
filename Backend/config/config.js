@@ -1,13 +1,19 @@
-// config/config.js
-require('dotenv').config();
+// Ejemplo de configuración de conexión usando la librería 'mysql'
+const mysql = require('mysql');
 
-module.exports = {
-  secret: process.env.JWT_SECRET || 'tu-clave-secreta-muy-segura',
-  emailConfig: {
-    service: process.env.EMAIL_SERVICE || 'Gmail',
-    auth: {
-      user: process.env.EMAIL_USER || 'tu_correo@gmail.com',
-      pass: process.env.EMAIL_PASSWORD || 'tu_contraseña',
-    },
-  },
-};
+const connection = mysql.createConnection({
+  host: '192.168.80.22', // Reemplaza con la IP del otro PC
+  user: 'developer',     // Reemplaza con el usuario que creaste
+  password: 'Jp.1023000929.1',         // Reemplaza con la contraseña
+  database: 'developer' // Reemplaza con el nombre de tu base de datos
+});
+
+connection.connect((err) => {
+  if (err) {
+    console.error('Error al conectar a la base de datos:', err);
+    return;
+  }
+  console.log('Conexión a la base de datos establecida.');
+});
+
+module.exports = connection; // Exporta la conexión para usarla en tus modelos/controladores

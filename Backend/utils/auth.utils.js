@@ -1,40 +1,116 @@
-const admin = require('firebase-admin');
-const db = admin.firestore();
-const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+const { mailConfig } = require('../config/config-email');
+const connection = require('../config/config');
 
-const CODIGOS_VERIFICACION_COLLECTION = 'codigos_verificacion';
 const CODIGO_EXPIRACION_MINUTOS = 15;
 
+const transporter = nodemailer.createTransport(mailConfig);
+
 function generarCodigoVerificacion() {
-  return Math.random().toString(10).substring(2, 8); // Genera un código de 6 dígitos
+  return Math.random().toString(10).substring(2, 8);
 }
 
 exports.enviarCodigoVerificacion = async (email) => {
   const codigo = generarCodigoVerificacion();
-  const now = admin.firestore.Timestamp.now();
-  const expiry = new Date(now.toDate().getTime() + CODIGO_EXPIRACION_MINUTOS * 60 * 1000);
+  const now = new Date();
+  const expiryTime = new Date(now.getTime() + CODIGO_EXPIRACION_MINUTOS * 60 * 1000);
 
   try {
-    await db.collection(CODIGOS_VERIFICACION_COLLECTION).doc(email).set({
-      email_usuario: email,
-      codigo: codigo,
-      fecha_creacion: now,
-      fecha_expiracion: admin.firestore.Timestamp.fromDate(expiry),
-    });
+    connection.query(
+      'REPLACE INTO codigos_verificacion (email_usuario, codigo, fecha_creacion) VALUES (?, ?, ?)',
+      [email, codigo, now],
+      (err, results) => {
+        if (err) {
+          console.error('Error al guardar el código de verificación:', err);
+          return false;
+        }
 
-    // Aquí iría la lógica real para enviar el correo electrónico
-    console.log(`Código de verificación ${codigo} enviado a ${email}`);
+        const mailOptions = {
+          from: mailConfig.auth.user,
+          to: email,
+          subject: 'Código de Verificación de NuplinTv',
+          html: `<p>Tu código de verificación es: <strong>${codigo}</strong>. Este código expirará en 15 minutos.</p>`,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error('Error al enviar el correo electrónico:', error);
+            return false;
+          }
+          console.log('Correo electrónico enviado:', info.messageId);
+          return true;
+        });
+        return true;
+      }
+    );
     return true;
   } catch (error) {
-    console.error('Error al guardar el código de verificación:', error);
+    console.error('Error en enviarCodigoVerificacion:', error);
     return false;
   }
 };
 
 exports.verificarCodigo = async (email, codigoIngresado) => {
-  // ... (función como la definimos anteriormente)
-};
+  try {
+    const results = await new Promise((resolve, reject) => {
+      connection.query(
+        'SELECT * FROM codigos_verificacion WHERE email_usuario = ? AND codigo = ?',
+        [email, codigoIngresado],
+        (err, results) => {
+          if (err) {
+            console.error('Error al verificar el código:', err);
+            reject(err);
+            return;
+          }
+          resolve(results);
+        }
+      );
+    });
 
-exports.eliminarCodigosInvalidos = async () => {
-  // ... (función como la definimos anteriormente)
+    if (results.length > 0) {
+      const codigoVerificacion = results[0];
+      const ahora = new Date();
+      const fechaCreacion = new Date(codigoVerificacion.fecha_creacion);
+      const tiempoTranscurrido = (ahora.getTime() - fechaCreacion.getTime()) / (1000 * 60);
+
+      if (tiempoTranscurrido <= CODIGO_EXPIRACION_MINUTOS) {
+        await new Promise((resolve, reject) => {
+          connection.query(
+            'DELETE FROM codigos_verificacion WHERE email_usuario = ?',
+            [email],
+            (err, results) => {
+              if (err) {
+                console.error('Error al eliminar el código:', err);
+                reject(err);
+                return;
+              }
+              resolve(results);
+            }
+          );
+        });
+        return  true ;
+      } else {
+        await new Promise((resolve, reject) => {
+          connection.query(
+            'DELETE FROM codigos_verificacion WHERE email_usuario = ?',
+            [email],
+            (err, results) => {
+              if (err) {
+                console.error('Error al eliminar el código expirado:', err);
+                reject(err);
+                return;
+              }
+              resolve(results);
+            }
+          );
+        });
+        return { valido: false, mensaje: 'El código ha expirado.' };
+      }
+    } else {
+      return { valido: false, mensaje: 'Código incorrecto.' };
+    }
+  } catch (error) {
+    console.error('Error en verificarCodigo:', error);
+    return { valido: false, mensaje: 'Error al verificar el código.' };
+  }
 };

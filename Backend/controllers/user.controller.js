@@ -1,24 +1,26 @@
 // controllers/user.controller.js
-const admin = require('firebase-admin');
-const db = admin.firestore();
+const Usuario = require('../models/user.model');
 
 exports.getUsuarios = async (req, res) => {
   try {
     const { fechaInicial, fechaFinal, paquete } = req.query;
-    const usersRef = db.collection('users');
-    let query = usersRef.where('fechaCreacion', '>=', new Date(fechaInicial))
-                       .where('fechaCreacion', '<=', new Date(fechaFinal + 'T23:59:59.999Z'));
+    let query = 'SELECT * FROM usuarios WHERE fecha_creacion >= ? AND fecha_creacion <= ?';
+    const params = [fechaInicial, fechaFinal + ' 23:59:59'];
+
     if (paquete) {
-      query = query.where('paquete', '==', paquete);
+      query += ' AND paquete = ?';
+      params.push(paquete);
     }
-    const snapshot = await query.get();
-    const usuarios = [];
-    snapshot.forEach(doc => {
-      usuarios.push({ id: doc.id, ...doc.data() });
+
+    connection.query(query, params, (err, results) => {
+      if (err) {
+        console.error('Error al obtener usuarios:', err);
+        return res.status(500).json({ message: 'Error al obtener la lista de usuarios' });
+      }
+      res.json(results);
     });
-    res.json(usuarios);
   } catch (error) {
-    console.error('Error al obtener usuarios:', error);
+    console.error('Error en la consulta de usuarios:', error);
     res.status(500).json({ message: 'Error al obtener la lista de usuarios' });
   }
 };
@@ -26,12 +28,25 @@ exports.getUsuarios = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const listaUsuarios = req.body;
-    const resultados = await Promise.all(listaUsuarios.map(async (usuario) => {
-      const userRef = db.collection('users').doc(usuario.id); // Asume que cada usuario en la lista tiene un 'id' que corresponde al ID del documento en Firestore
-      await userRef.update(usuario);
-      const updatedDoc = await userRef.get();
-      return { id: updatedDoc.id, ...updatedDoc.data() };
-    }));
+    const resultados = [];
+
+    for (const usuario of listaUsuarios) {
+      await new Promise((resolve, reject) => {
+        connection.query('UPDATE usuarios SET password = ?, nombre = ?, apellido = ?, id_rol = ?, estado = ? WHERE id = ?',
+          [usuario.password, usuario.nombre, usuario.apellido, usuario.id_rol, usuario.estado, usuario.id],
+          (err, result) => {
+            if (err) {
+              console.error('Error al actualizar usuario:', err);
+              reject(err);
+              return;
+            }
+            resultados.push({ id: usuario.id, affectedRows: result.affectedRows });
+            resolve();
+          }
+        );
+      });
+    }
+
     res.json({ message: 'Usuarios actualizados exitosamente', data: resultados });
   } catch (error) {
     console.error('Error al actualizar usuarios:', error);
@@ -43,11 +58,24 @@ exports.createUser = async (req, res) => {
   try {
     const listaUsuarios = req.body;
     const resultados = [];
+
     for (const usuario of listaUsuarios) {
-      const docRef = await db.collection('users').add(usuario);
-      const docSnapshot = await docRef.get();
-      resultados.push({ id: docSnapshot.id, ...docSnapshot.data() });
+      await new Promise((resolve, reject) => {
+        connection.query('INSERT INTO usuarios (id, correo, password, nombre, apellido, id_rol, estado) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [usuario.id, usuario.correo, usuario.password, usuario.nombre, usuario.apellido, usuario.id_rol, usuario.estado],
+          (err, result) => {
+            if (err) {
+              console.error('Error al crear usuario:', err);
+              reject(err);
+              return;
+            }
+            resultados.push({ id: usuario.id, insertId: result.insertId });
+            resolve();
+          }
+        );
+      });
     }
+
     res.status(201).json({ message: 'Usuarios creados exitosamente', data: resultados });
   } catch (error) {
     console.error('Error al crear usuarios:', error);
@@ -58,11 +86,23 @@ exports.createUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const listaIDUsuarios = req.body;
-    const results = await Promise.all(listaIDUsuarios.map(async (id) => {
-      await db.collection('users').doc(id.toString()).delete(); // Asume que los IDs son strings en Firestore
-      return id;
-    }));
-    res.json({ message: 'Usuarios desactivados exitosamente', data: { deletedCount: results.length } });
+    const resultados = [];
+
+    for (const id of listaIDUsuarios) {
+      await new Promise((resolve, reject) => {
+        connection.query('DELETE FROM usuarios WHERE id = ?', [id], (err, result) => {
+          if (err) {
+            console.error('Error al eliminar usuario:', err);
+            reject(err);
+            return;
+          }
+          resultados.push({ id: id, affectedRows: result.affectedRows });
+          resolve();
+        });
+      });
+    }
+
+    res.json({ message: 'Usuarios desactivados exitosamente', data: { deletedCount: resultados.reduce((sum, res) => sum + res.affectedRows, 0) } });
   } catch (error) {
     console.error('Error al desactivar usuarios:', error);
     res.status(500).json({ message: 'Error al desactivar usuarios' });
