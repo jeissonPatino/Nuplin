@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes'); // Importa las rutas de usuarios
+const logRoutes = require('./routes/log.routes');
 
 
 const app = express();
@@ -17,7 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/clientes', userRoutes);
-
+app.use('/api/logs', logRoutes);
 
 
 

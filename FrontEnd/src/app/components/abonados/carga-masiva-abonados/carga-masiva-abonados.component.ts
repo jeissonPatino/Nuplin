@@ -161,31 +161,7 @@ export class CargaMasivaAbonadosComponent implements AfterViewInit {
   }
 
   cargarDatosMasivamente() {
-    this.authService.sendEmailCodeVerification(this.authService.isAuthenticated())
-      .subscribe(
-        (codigo) => {
-          const userCode = prompt('Por favor, ingrese el código de verificación enviado a su correo:');
-          if (userCode === codigo) {
-            this.gestionUsuariosService.createUser(this.transformDataForAPI(this.responsiveTables)).subscribe(
-              (response) => {
-                this.toastr.success('Datos cargados exitosamente.', 'Éxito');
-                this.crearLog('Carga Masiva', 'Datos cargados exitosamente.', 'INFO', 'ABONADOS');
-              },
-              (error) => {
-                this.toastr.error('Error al cargar los datos.', 'Error');
-                this.crearLog('Carga Masiva', 'Error al cargar los datos.'+error, 'ERROR', 'ABONADOS');
-              }
-            );
-          } else {
-            this.toastr.error('Código de verificación incorrecto.', 'Error');
-            this.crearLog('Carga Masiva', 'Código de verificación incorrecto.', 'ERROR', 'ABONADOS');
-          }
-        },
-        (error) => {
-          this.toastr.error('Error al enviar el código de verificación.', 'Error');
-          this.crearLog('Carga Masiva', 'Error al enviar el código de verificación.'+error, 'ERROR', 'ABONADOS');
-        }
-      );
+    
   }
 
   transformDataForAPI(data: DatosAbonadoCSV[]): any[] {

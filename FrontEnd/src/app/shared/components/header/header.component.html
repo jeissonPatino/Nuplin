@@ -94,9 +94,9 @@
                         <div
                             class="ti-dropdown-item text-center border-b border-defaultborder dark:border-defaultborder/10 block">
                             <span>
-                                {{dataUSer.displayName}}
+                                {{dataUSer?.nombre}} {{ dataUSer?.apellido }}
                             </span>
-                            <span class="block text-xs text-textmuted dark:text-textmuted/50">{{dataUSer.role}}</span>
+                            <span class="block text-xs text-textmuted dark:text-textmuted/50">Temp</span>
                         </div>
                     </li>
                     <li><a class="ti-dropdown-item flex items-center" (click)="logout()"><i

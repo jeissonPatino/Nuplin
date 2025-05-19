@@ -6,7 +6,7 @@ import { AuthGuard } from '../../guards/auth.guard';
 export const content: Routes = [
   { path: '', 
     canActivate: [AuthGuard], 
-    data: { role: 'user' },children: [
+    data: { role: '1' },children: [
    ...dashboardRoutingModule.routes,
   ]}
 ];

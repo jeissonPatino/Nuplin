@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { LoginResponse } from '../models/LoginResponse';
 import { ToastrService } from 'ngx-toastr';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,6 @@ export class AuthService {
   private INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 minutos en ms
   private email: string | null = null;
   private pass: string | null = null;
-  private codigo: string = '';
   apiUrl:string = environment.ApiUrl;
   constructor( 
       private http: HttpClient,
@@ -47,6 +47,7 @@ export class AuthService {
         timeOut: 5000
       });
     }, WARNING_TIME);
+    
     this.inactivityTimeout = setTimeout(() => this.logout(), this.INACTIVITY_LIMIT);
   }
   //el usuario ingresa correo y contraseña
@@ -54,9 +55,8 @@ export class AuthService {
     try {
       let [password, email] = this.encryptionService.decrypt(formUser).split('&');
       try {
-        const response = await this.http.post<LoginResponse>(`${this.apiUrl}auth/login`, { formUser } ).toPromise();
+        const response = await this.http.post<LoginResponse>(`${this.apiUrl}auth/login`, { correo: email, password: password } ).toPromise();
         if (response) {
-          
           return { token: response.token, userData: response };
         }
       } catch (backendError) {
@@ -82,32 +82,20 @@ export class AuthService {
     return Promise.resolve({ active: 0 });
   }
 
-  async loginConCodigo(codigo: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      const user = this.isAuthenticated();
-      const validacion = this.verificarCodigo(codigo);
-      resolve(!!user && validacion);
-    });
+  async loginConCodigo(email: string, codigo: string): Promise<any> {
+    return this.http.post(`${this.apiUrl}auth/verificarCodigo`, { email: email, codigo: codigo }).toPromise();
+    
   }
 
-  //Se toma el usuario en sesion
-  isAuthenticated(): any {
-    let username= this.encryptionService.decryptUser().split('&')[0];
-    if (!username) return false;
-    try {
-      return username 
-    } catch (error) {
-      console.error('Error al descifrar el usuario:', error);
-      return true;
-    }
-  }
+  
 
   //se obtiene el rol del usuario
-  getUserRole(): string | null {
-    let userType = this.encryptionService.decryptUser().split('&')[1];
+  getUserRole(): number | null {
+    debugger;
+    let userType = this.encryptionService.getRoleFromToken();
     if (!userType) return null;
     try {
-      return userType || null
+      return userType || 0
     } catch (error) {
       console.error('Error al descifrar el usuario:', error);
       return null;
@@ -128,10 +116,6 @@ export class AuthService {
     return email === decoded.sub;
   }
 
-  verificarCodigo(code: string): Promise<boolean> {
-    return Promise.resolve(this.codigo === code);
-  }
-  
   sendEmailCodeVerification(email: string) {
     const url = `${this.apiUrl}auth/dobleAuth`;
     const headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
@@ -166,5 +150,12 @@ export class AuthService {
     }, 5500);
   }
 
+  registrarCliente(formData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}auth/registro`, formData);
+  }
+
+  getUserSessionData(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}clientes/session-data`, { email });
+  }
   
 }

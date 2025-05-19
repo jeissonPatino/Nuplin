@@ -25,6 +25,7 @@ export class SalesComponent {
     document.querySelector('.single-page-header')?.classList.add('hidden');
   }
   ngOnInit() {
+    debugger;
     this.cdr.detectChanges(); 
   }
 

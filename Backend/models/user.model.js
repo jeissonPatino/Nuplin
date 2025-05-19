@@ -1,9 +1,9 @@
 // models/user.model.js
-const connection = require('../config/config');
+const dbConfig = require('../config/config');
 
 const Usuario = {
   findByEmail: (email, callback) => {
-    connection.query('SELECT * FROM usuarios WHERE correo = ?', [email], (err, results) => {
+    dbConfig.connection.query('SELECT * FROM usuarios WHERE correo = ?', [email], (err, results) => {
       if (err) {
         console.error('Error al buscar usuario por correo:', err);
         return callback(err, null);
@@ -13,7 +13,7 @@ const Usuario = {
   },
 
   findById: (id, callback) => {
-    connection.query('SELECT * FROM usuarios WHERE id = ?', [id], (err, results) => {
+    dbConfig.connection.query('SELECT * FROM usuarios WHERE id = ?', [id], (err, results) => {
       if (err) {
         console.error('Error al buscar usuario por ID:', err);
         return callback(err, null);
@@ -23,8 +23,8 @@ const Usuario = {
   },
 
   crear: (usuario, callback) => {
-    connection.query('INSERT INTO usuarios (id, correo, password, nombre, apellido, id_rol, estado) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [usuario.id, usuario.correo, usuario.password, usuario.nombre, usuario.apellido, usuario.id_rol, usuario.estado],
+    dbConfig.connection.query('INSERT INTO usuarios (id, correo, password, nombre, apellido, id_rol, estado, id_tipo_documento) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [usuario.id, usuario.correo, usuario.password, usuario.nombre, usuario.apellido, usuario.id_rol, usuario.estado, usuario.id_tipo_documento],
       (err, results) => {
         if (err) {
           console.error('Error al crear usuario:', err);
@@ -35,7 +35,7 @@ const Usuario = {
   },
 
   actualizar: (usuario, callback) => {
-    connection.query('UPDATE usuarios SET password = ?, nombre = ?, apellido = ?, id_rol = ?, estado = ? WHERE id = ?',
+    dbConfig.connection.query('UPDATE usuarios SET password = ?, nombre = ?, apellido = ?, id_rol = ?, estado = ? WHERE id = ?',
       [usuario.password, usuario.nombre, usuario.apellido, usuario.id_rol, usuario.estado, usuario.id],
       (err, results) => {
         if (err) {
@@ -47,7 +47,7 @@ const Usuario = {
   },
 
   eliminar: (id, callback) => {
-    connection.query('DELETE FROM usuarios WHERE id = ?', [id], (err, results) => {
+    dbConfig.connection.query('DELETE FROM usuarios WHERE id = ?', [id], (err, results) => {
       if (err) {
         console.error('Error al eliminar usuario:', err);
         return callback(err, null);
@@ -57,7 +57,7 @@ const Usuario = {
   },
 
   obtenerTodos: (callback) => {
-    connection.query('SELECT * FROM usuarios', (err, results) => {
+    dbConfig.connection.query('SELECT * FROM usuarios', (err, results) => {
       if (err) {
         console.error('Error al obtener todos los usuarios:', err);
         return callback(err, null);
@@ -65,6 +65,27 @@ const Usuario = {
       callback(null, results);
     });
   },
+
+  obtenerUsuariosAdministrador: (callback) => {
+    dbConfig.connection.query('SELECT * FROM vw_usuarios_administrador', (err, results) => {
+      if (err) {
+        console.error('Error al obtener todos los usuarios Administrador:', err);
+        return callback(err, null);
+      }
+      callback(null, results);
+    });
+  },
+
+  obtenerUsuariosClientesVehiculos: (callback) => {
+    dbConfig.connection.query('SELECT * FROM vw_clientes_con_vehiculos', (err, results) => {
+      if (err) {
+        console.error('Error al obtener todos los usuarios Clientes con vehiculos:', err);
+        return callback(err, null);
+      }
+      callback(null, results);
+    });
+  },
+
 };
 
 module.exports = Usuario;

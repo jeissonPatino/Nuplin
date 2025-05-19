@@ -44,4 +44,16 @@ getUsuarios(fechaInicio: string, fechaFin: string, paquete?: string): Observable
     return this.http.put(`${this.apiUrl}/desactivar`, listaIDUsuarios);
 }
 
+
+getUsuariosAdministrador():Observable<any>{
+  let url = `${this.apiUrl}clientes/usuarios-administrador`;
+  return this.http.get(url);
+}
+
+getUsuariosClientesVehiculos():Observable<any>{
+  let url = `${this.apiUrl}clientes/esuarios-clientes-vehiculos`;
+  return this.http.get(url);
+}
+
+
 }

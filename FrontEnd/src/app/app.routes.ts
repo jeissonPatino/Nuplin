@@ -6,6 +6,7 @@ import { authen } from './shared/routes/auth.routes';
 import { AuthGuard } from './guards/auth.guard';
 import { TowStepVerificationsComponent } from './authentication/tow-step-verifications/tow-step-verifications.component';
 import { RememberPasswordComponent } from './authentication/remember-password/remember-password.component';
+import { RegisterUserComponent } from './authentication/register-user/register-user.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
@@ -23,7 +24,12 @@ export const routes: Routes = [
       component: TowStepVerificationsComponent,
       
     },
-    { path: '', component: ContentLayoutComponent, children: content ,canActivate: [AuthGuard], data: { role: 'Cliente' } },
-    { path: '', component: AuthenticationLayoutComponent, children: authen  ,canActivate: [AuthGuard], data: { role: 'Cliente' }},
+    { 
+      path: 'auth/register-user', 
+      component: RegisterUserComponent,
+      
+    },
+    { path: '', component: ContentLayoutComponent, children: content ,canActivate: [AuthGuard], data: { role: 1 } },
+    { path: '', component: AuthenticationLayoutComponent, children: authen  ,canActivate: [AuthGuard], data: { role: 1 }},
     { path: '**', redirectTo: '/error/acceso-denegado', pathMatch: 'full' },
 ];

@@ -20,7 +20,7 @@ import { AuthService } from '../../services/auth.service';
 export class SidebarComponent {
   eventTriggered: boolean = false;
   screenWidth!: number;
-  userRole: string = '';
+  userRole: number = 0;
   public localdata = localStorage;
   public windowSubscribe$!: Subscription;
   options = { autoHide: false, scrollbarMinSize: 100 };
@@ -68,14 +68,14 @@ export class SidebarComponent {
   };
 
     this.menuitemsSubscribe$ = this.navServices.items.subscribe((items) => {
-      this.userRole = this.authService.getUserRole() ?? ''; 
+      this.userRole = this.authService.getUserRole() ?? 0; 
       if (!this.userRole) return;
       this.menuItems = items
-        .filter(item => this.hasPermission(item, this.userRole!))
+        .filter(item => this.hasPermission(item, this.userRole!.toString()))
         .map(item => ({
           ...item,
             children: item.children 
-            ? item.children.filter(child => this.hasPermission(child, this.userRole!)) 
+            ? item.children.filter(child => this.hasPermission(child, this.userRole!.toString())) 
             : []
         }));
     });

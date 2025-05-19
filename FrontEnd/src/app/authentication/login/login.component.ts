@@ -63,10 +63,6 @@ constructor(
   }
 
   ngOnInit(): void {
-    const token = sessionStorage.getItem('JWT');
-    if(token){
-      this.authservice.logout();
-    }
     const script = document.createElement('script');
     script.src = `https://www.google.com/recaptcha/api.js?render=${environment.recaptchaSiteKey}`;
     script.async = true;
@@ -129,6 +125,8 @@ constructor(
       return null;
     }
   }
+
+
   
 }
 

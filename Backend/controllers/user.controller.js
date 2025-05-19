@@ -108,3 +108,44 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: 'Error al desactivar usuarios' });
   }
 };
+
+exports.dataUserSession = async (req, res)=>{
+  const {email} = req.body;
+  Usuario.findByEmail(email, (err, usuario)=>{
+    if (err) {
+        console.error('Error al buscar usuario:', err);
+        return res.status(500).json({ message: 'Error al verificar el código.' });
+      }
+      if (!usuario) {
+        return res.status(404).json({ message: 'Usuario no encontrado.' });
+      }
+    return res.status(200).json({ nombre: usuario.nombre, apellido: usuario.apellido });
+  })
+
+}
+
+exports.obtenerUsuariosAdministrador = async (res)=>{
+  Usuario.obtenerUsuariosAdministrador( (err, usuarios)=>{
+    if (err) {
+        console.error('Error al obtener todos los usuarios Administrador:', err);
+        return res.status(500).json({ message: 'Error al verificar el código.' });
+      }
+      if (!usuarios) {
+        return res.status(404).json({ message: 'Usuarios no encontrados.' });
+      }
+    return res.status(200).json(usuarios);
+  })
+}
+
+exports.obtenerUsuariosClientesVehiculos = async ( res)=>{
+  Usuario.obtenerUsuariosClientesVehiculos( (err, usuarios)=>{
+    if (err) {
+        console.error('Error al obtener todos los usuarios Clientes con vehiculos:', err);
+        return res.status(500).json({ message: 'Error al obtener todos los usuarios Clientes con vehiculos' });
+      }
+      if (!usuarios) {
+        return res.status(404).json({ message: 'Usuarios no encontrados.' });
+      }
+    return res.status(200).json(usuarios);
+  })
+}

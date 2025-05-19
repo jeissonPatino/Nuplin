@@ -4,6 +4,8 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { AppStateService } from '../../services/app-state.service';
 import { filter } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { EncryptionService } from '../../services/encryption.service';
+import { ToastrService } from 'ngx-toastr';
 interface Item {
   id: number;
   name: string;
@@ -35,6 +37,10 @@ export class HeaderComponent {
     public renderer: Renderer2,
     private router: Router, private activatedRoute: ActivatedRoute,
     public autService: AuthService,
+    private encryptionService: EncryptionService,
+    private toastr: ToastrService ,
+
+
   ) {this.localStorageBackUp()}
 
   toggleDropdown() {
@@ -249,10 +255,7 @@ export class HeaderComponent {
   public SearchResultEmpty: boolean = false;
 
   ngOnInit(): void {
-    const user = this.autService.isAuthenticated();
-    if (user) {
-      this.dataUSer = user;
-    }
+    this.getUserSessionData();
     this.updateTheme();
     const storedSelectedItem = localStorage.getItem('selectedItem');
     // this.updateSelectedItem();
@@ -284,7 +287,6 @@ export class HeaderComponent {
   ngOnDestroy(): void {
     const windowObject: any = window;
     let html = this.elementRef.nativeElement.ownerDocument.documentElement;
- 
     window.addEventListener('resize', () => {
       if (localStorage.getItem('xintraverticalstyles') != 'icon-text-close') {
         if (windowObject.innerWidth <= '991') {
@@ -382,11 +384,6 @@ export class HeaderComponent {
     this.isInputFocused = false;
   }
 
-  // isFullscreen = false;
-
-  // fullScreenToggle() {
-  //   this.isFullscreen = !this.isFullscreen;
-  // }
   isFullscreen: boolean = false;
   toggleFullscreen() {
     this.isFullscreen = !this.isFullscreen;
@@ -396,6 +393,23 @@ export class HeaderComponent {
     this.autService.logout();
   }
 
+  getUserSessionData() {
+  const email = this.encryptionService.getEmailFromToken();
+  if (!email) {
+    this.toastr.error('No hay datos de usuario, validar con el admin', 'NuplinTv', { timeOut: 5000 });
+  } else {
+    this.autService.getUserSessionData(email)
+      .subscribe(
+        (data) => {
+          this.dataUSer = data;
+        },
+        (error) => {
+          console.error('Error al obtener datos del usuario:', error);
+          this.toastr.error('Error al obtener datos del usuario', 'NuplinTv', { timeOut: 5000 });
+        }
+      );
+  }
+}
 
 
 }

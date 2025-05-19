@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 const { mailConfig } = require('../config/config-email');
-const connection = require('../config/config');
+const dbConfig = require('../config/config');
 
 const CODIGO_EXPIRACION_MINUTOS = 15;
 
@@ -13,10 +13,10 @@ function generarCodigoVerificacion() {
 exports.enviarCodigoVerificacion = async (email) => {
   const codigo = generarCodigoVerificacion();
   const now = new Date();
-  const expiryTime = new Date(now.getTime() + CODIGO_EXPIRACION_MINUTOS * 60 * 1000);
+  
 
   try {
-    connection.query(
+    dbConfig.connection.query(
       'REPLACE INTO codigos_verificacion (email_usuario, codigo, fecha_creacion) VALUES (?, ?, ?)',
       [email, codigo, now],
       (err, results) => {
@@ -53,9 +53,9 @@ exports.enviarCodigoVerificacion = async (email) => {
 exports.verificarCodigo = async (email, codigoIngresado) => {
   try {
     const results = await new Promise((resolve, reject) => {
-      connection.query(
-        'SELECT * FROM codigos_verificacion WHERE email_usuario = ? AND codigo = ?',
-        [email, codigoIngresado],
+      dbConfig.connection.query(
+        'SELECT * FROM codigos_verificacion WHERE email_usuario = ? ORDER BY fecha_creacion DESC LIMIT 1',
+        [email],
         (err, results) => {
           if (err) {
             console.error('Error al verificar el código:', err);
@@ -66,51 +66,21 @@ exports.verificarCodigo = async (email, codigoIngresado) => {
         }
       );
     });
-
     if (results.length > 0) {
       const codigoVerificacion = results[0];
       const ahora = new Date();
       const fechaCreacion = new Date(codigoVerificacion.fecha_creacion);
       const tiempoTranscurrido = (ahora.getTime() - fechaCreacion.getTime()) / (1000 * 60);
-
-      if (tiempoTranscurrido <= CODIGO_EXPIRACION_MINUTOS) {
-        await new Promise((resolve, reject) => {
-          connection.query(
-            'DELETE FROM codigos_verificacion WHERE email_usuario = ?',
-            [email],
-            (err, results) => {
-              if (err) {
-                console.error('Error al eliminar el código:', err);
-                reject(err);
-                return;
-              }
-              resolve(results);
-            }
-          );
-        });
-        return  true ;
+      if (codigoVerificacion.codigo === codigoIngresado && tiempoTranscurrido <= CODIGO_EXPIRACION_MINUTOS) {
+        return { valido: true }; 
       } else {
-        await new Promise((resolve, reject) => {
-          connection.query(
-            'DELETE FROM codigos_verificacion WHERE email_usuario = ?',
-            [email],
-            (err, results) => {
-              if (err) {
-                console.error('Error al eliminar el código expirado:', err);
-                reject(err);
-                return;
-              }
-              resolve(results);
-            }
-          );
-        });
-        return { valido: false, mensaje: 'El código ha expirado.' };
+        return { valido: false, mensaje: 'El código ha expirado.' }; 
       }
     } else {
       return { valido: false, mensaje: 'Código incorrecto.' };
     }
   } catch (error) {
     console.error('Error en verificarCodigo:', error);
-    return { valido: false, mensaje: 'Error al verificar el código.' };
+    return false;
   }
 };

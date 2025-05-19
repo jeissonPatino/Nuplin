@@ -98,28 +98,35 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
   }
 
   validarCodigoLogin(codigo: string) {
-    this.authservice.loginConCodigo(codigo)
-      .then(success => {
-        if (success) {
-          sessionStorage.setItem('JWT', this.route.snapshot.queryParams['token']);
+    this.authservice.loginConCodigo(this.email, codigo)
+      .then(response => { 
+        if (response && response.token) {
+          sessionStorage.setItem('JWT', response.token);
           sessionStorage.setItem('sessionStartTime', Date.now().toString());
           this.crearLog('LOGIN', 'Usuario autenticado correctamente', 'INFO', 'LOGIN');
           this.router.navigate(['/nuplinTV/inicio']);
         } else {
           this.crearLog('LOGIN', 'Ocurrió un error con la autenticación', 'ERROR', 'LOGIN');
-          this.toastr.error('El codigo es incorrecto', 'Nuplin', {
+          this.toastr.error(response?.message || 'El código es incorrecto', 'Nuplin', {
             timeOut: 3000,
             positionClass: 'toast-top-right'
           });
         }
+      })
+      .catch(error => {
+        console.error('Error al verificar el código', error);
+        this.toastr.error('Error al verificar el código', 'Nuplin', {
+          timeOut: 3000,
+          positionClass: 'toast-top-right'
+        });
       });
   }
 
   validarCodigoCambioPass(codigo: string) {
-    this.authservice.verificarCodigo(codigo) 
+    /*this.authservice.verificarCodigo(codigo) 
       .then(isValid => {
         if (isValid) {
-          this.authservice.actualizarPassword(this.email, this.newPass).then(success => {
+          this.authservice.actualizarPassword(this.email, this.newPass).then((success: any) => {
             if (success) {
               this.toastr.success('Contraseña cambiada exitosamente. Inicia sesión con tu nueva contraseña.', 'Nuplin', {
                 timeOut: 3000,
@@ -141,7 +148,7 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
             positionClass: 'toast-top-right'
           });
         }
-      });
+      });*/
   }
 
 reSend(){
@@ -159,7 +166,7 @@ reSend(){
 }
 
 private crearLog(accion: string, descripcion: string, logLevel: string, moduloOrigen: string) {
-  const email = this.encryptionService.decryptUser().split('&')[1];
+  const email = this.encryptionService.getEmailFromToken();
   if (email !== null) {
     const mensaje = descripcion;
     const detalles = `${accion} - ${descripcion}`;

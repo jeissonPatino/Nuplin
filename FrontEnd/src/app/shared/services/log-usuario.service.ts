@@ -21,7 +21,7 @@ export class LogUsuarioService {
 
   crearLog(emialUsuario: string, logLevel: string, moduloOrigen: string, mensaje: string, detalles: string): Observable<LogUsuario> {
     const logEntry: LogUsuario = {
-      emialUsuario: emialUsuario,
+      emialUsuario: emialUsuario, 
       logLevel: logLevel,
       moduloOrigen: moduloOrigen,
       mensaje: mensaje,

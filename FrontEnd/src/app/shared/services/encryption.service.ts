@@ -53,4 +53,42 @@ export class EncryptionService {
     }
   }
 
+  getEmailFromToken(): string | null {
+    const token = sessionStorage.getItem('JWT');
+    if (!token) {
+      return null;
+    }
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      const payload = JSON.parse(jsonPayload);
+      return payload ? payload.sub : null;
+    } catch (error) {
+      console.error('Error al decodificar el token:', error);
+      return null;
+    }
+  }
+
+  getRoleFromToken(): number | null {
+    const token = sessionStorage.getItem('JWT');
+    if (!token) {
+      return null;
+    }
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      const payload = JSON.parse(jsonPayload);
+      return payload ? payload.role : null; // Accede a la propiedad 'role'
+    } catch (error) {
+      console.error('Error al decodificar el token:', error);
+      return null;
+    }
+  }
+
 }

@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate {
     const user = this.authService.getUserRole(); 
   
     if (user) {
-      if (user === 'admin' || user === expectedRole) {
+      if (user === 1 || user === expectedRole) {
         return true;
       }
     }

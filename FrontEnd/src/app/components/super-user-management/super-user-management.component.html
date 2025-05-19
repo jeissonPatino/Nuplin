@@ -1,0 +1,84 @@
+<div class="col-span-12 md:col-span-6 xxl:!col-span-4">
+    <div class="box">
+        <div class="box-header">
+            <h5 class="box-title">Bar with underline</h5>
+        </div>
+        <div class="box-body">
+          <nav class="relative z-0 sm:flex border rounded-sm divide-y sm:divide-y-0 sm:divide-x rtl:divide-x-reverse divide-gray-200 overflow-hidden dark:border-white/10 dark:divide-white/10 " role="tablist">
+            <a class="justify-center items-center sm:flex inline-flex w-full sm:w-auto hs-tab-active:border-b-2 hs-tab-active:!border-b-primary hs-tab-active:text-gray-900 dark:hs-tab-active:text-defaulttextcolor/70 group relative min-w-0 flex-1 bg-white dark:bg-black py-4 px-4 text-defaulttextcolor hover:text-gray-700 text-sm font-medium text-center overflow-hidden dark:text-[#8c9097] dark:text-white/50 hover:bg-gray-50 focus:z-10 dark:bg-customwhite dark:hover:bg-black/20 dark:hover:text-white active" href="javascript:void(0);" id="bar-item-1" data-hs-tab="#bar-1" aria-controls="bar-1">
+              Administradores
+            </a>
+
+            <a class="justify-center items-center sm:flex inline-flex w-full sm:w-auto hs-tab-active:border-b-2 hs-tab-active:!border-b-primary hs-tab-active:text-gray-900 dark:hs-tab-active:text-defaulttextcolor/70 group relative min-w-0 flex-1 bg-white dark:bg-black py-4 px-4 text-defaulttextcolor hover:text-gray-700 text-sm font-medium text-center overflow-hidden dark:text-[#8c9097] dark:text-white/50 hover:bg-gray-50 focus:z-10 dark:bg-customwhite dark:hover:bg-black/20 dark:hover:text-white active" href="javascript:void(0);" id="bar-item-2" data-hs-tab="#bar-2" aria-controls="bar-2">
+              Clientes
+            </a>
+          </nav>
+
+          <div class="mt-3">
+            <div id="bar-1" role="tabpanel" aria-labelledby="bar-item-1">
+               <div class="table-responsive">
+                        <spk-reusable-tables [columns]="responsiveColumnAdministrador"  tableHeadColumn="text-start"
+                        trClass="border-b  border-defaultborder dark:border-defaultborder/10"
+                        tableClass="ti-custom-table whitespace-nowrap min-w-full"  [showCheckbox]="false">
+                            @for(tableAdmin of paginatedDataAdministrador;track $index){
+                            <tr>
+                                <td>
+                                    <div class="flex items-center">
+                                        {{tableAdmin.name}}
+                                    </div>
+                                </td>
+                                <td>{{tableAdmin.mail}}</td>
+                                <td>{{tableAdmin.pack}}</td>
+                                <td>{{tableAdmin.dateActivation}}</td>
+                                <td><span class="">{{tableAdmin.periody}}</span></td>
+                                <td>
+                                    <div class="hstack flex gap-3 text-[.9375rem]">
+                                        <a class="ti-btn ti-btn-icon ti-btn-sm ti-btn-soft-info" ><i
+                                                class="ri-edit-line"></i></a>
+                                        <a href="javascript:void(0);"
+                                            class="ti-btn ti-btn-sm ti-btn-soft-danger !rounded-full"><i
+                                                class="ri-delete-bin-line"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                        </spk-reusable-tables>
+                    </div>
+            </div>
+            <div id="bar-2" class="hidden" role="tabpanel" aria-labelledby="bar-item-2">
+             
+                <div class="table-responsive">
+                        <spk-reusable-tables [columns]="responsiveColumnCliente"  tableHeadColumn="text-start"
+                        trClass="border-b  border-defaultborder dark:border-defaultborder/10"
+                        tableClass="ti-custom-table whitespace-nowrap min-w-full"  [showCheckbox]="false">
+        
+                            @for(tableClient of paginatedDataCliente;track $index){
+                            <tr>
+                                <td>
+                                    <div class="flex items-center">
+                                        {{tableClient.name}}
+                                    </div>
+                                </td>
+                                <td>{{tableClient.mail}}</td>
+                                <td>{{tableClient.pack}}</td>
+                                <td>{{tableClient.dateActivation}}</td>
+                                <td><span class="">{{tableClient.periody}}</span></td>
+                                <td>
+                                    <div class="hstack flex gap-3 text-[.9375rem]">
+                                        <a class="ti-btn ti-btn-icon ti-btn-sm ti-btn-soft-info"><i
+                                                class="ri-edit-line"></i></a>
+                                        <a href="javascript:void(0);"
+                                            class="ti-btn ti-btn-sm ti-btn-soft-danger !rounded-full"><i
+                                                class="ri-delete-bin-line"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                        </spk-reusable-tables>
+                    </div>
+              
+            </div>
+          </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,91 @@
+<div class="container">
+    <div class="flex justify-center items-center authentication authentication-basic h-full">
+        <div class="xl:max-w-[41.66666667%] md:max-w-[60%]">
+            <div class="box my-4">
+                <div class="box-body p-[3rem]">
+                    <div class="mb-4 flex justify-center">
+                        <img src="./assets/images/company-logos/1 NUPLIN-NEGATIVO-PARA-CLARO-109x31.png" alt="logo" class="desktop-logo">
+                        <img src="./assets/images/company-logos/2 NUPLIN-POSITIVO PARA OSCURO-109x31.png" alt="logo" class="desktop-white">
+                    </div>
+                    <p class="h5 mb-2 text-center">Regístrate</p>
+                    <p class="mb-4 text-textmuted dark:text-textmuted/50 opacity-70 font-normal text-center">¡Bienvenido! Comienza creando tu cuenta.</p>
+                    <form [formGroup]="registerForm" (ngSubmit)="Submit()" >
+                        <div class="grid grid-cols-12 gap-y-4">
+                            <div class="xl:col-span-12 col-span-12">
+                                <label for="signup-firstname" class="form-label text-defaulttextcolor">Nombres<sup class="text-xs text-danger">*</sup></label>
+                                <input type="text" class="form-control" id="signup-firstname" placeholder="Nombres" autocomplete formControlName="firstname" required>
+                            </div>
+                            <div class="xl:col-span-12 col-span-12">
+                                <label for="signup-firstname" class="form-label text-defaulttextcolor">Apellidos<sup class="text-xs text-danger">*</sup></label>
+                                <input type="text" class="form-control" id="signup-lastname" placeholder="Apellidos" autocomplete formControlName="lastname" required>
+                            </div>
+                            <div class="xl:col-span-12 col-span-12">
+                                <label for="signup-typeIdentification" class="form-label text-defaulttextcolor">Tipo identificación<sup class="text-xs text-danger">*</sup></label>
+                                <spk-ng-select 
+                                        [options]="TypeDoc"
+                                        [selectClass]="'max-w-md'"
+                                        [clearable]="true"
+                                        [multi]="false"
+                                        [searchable]="false"
+                                        [placeholder]="'Seleccione un Tipo identificación'"
+                                        [additionalProperties]="{}"
+                                        (selectedChange)="handleSelectChange($event)">
+                                </spk-ng-select>
+                            </div>
+                            <div class="xl:col-span-12 col-span-12">
+                                <label for="signup-firstname" class="form-label text-defaulttextcolor">Número de identificación<sup class="text-xs text-danger">*</sup></label>
+                                <input type="text" class="form-control" id="signup-NumberIdentification" placeholder="Número de identificación" autocomplete formControlName="NumberIdentification" required>
+                            </div>
+                            <div class="xl:col-span-12 col-span-12">
+                                <label for="signup-firstname" class="ti-form-label text-default">Correo<sup class="text-xs text-danger">*</sup>
+                                    <p class="text-danger text-xs mt-1" *ngIf="registerForm.controls['email'].invalid && (registerForm.controls['email'].dirty || registerForm.controls['email'].touched)">
+                                        El correo no cumple con el formato requerido.
+                                    </p>
+                                </label>
+                                <input type="email" class="form-control" id="signup-firstname" placeholder="Correo" autocomplete formControlName="email" required>
+                            </div>
+                            <div class="xl:col-span-12 col-span-12">
+                                <label for="signup-password" class="form-label text-defaulttextcolor">Contraseña<sup class="text-xs text-danger">*</sup>
+                                    <p class="text-danger text-xs mt-1" *ngIf="registerForm.controls['password'].invalid && (registerForm.controls['password'].dirty || registerForm.controls['password'].touched)">
+                                        La contraseña debe tener entre 8 y 10 caracteres y contener al menos una mayúscula, una minúscula, un número y un carácter especial.
+                                    </p>
+                                </label>
+                                <div class="relative">
+                                    <input  [type]="showPassword ? 'text' : 'password'" type="password" class="form-control create-password-input" id="signup-password" placeholder="Contraseña" autocomplete formControlName="password" required>
+                                    <a href="javascript:void(0);" class="show-password-button text-textmuted dark:text-textmuted/50" (click)="togglePassword()"  id="button-addon2"><i class="{{toggleClass}} align-middle"></i></a>
+                                </div>
+                            </div>
+                            <div class="xl:col-span-12 col-span-12">
+                                <label for="signup-confirmpassword" class="form-label text-defaulttextcolor">Confirmar Contraseña<sup class="text-xs text-danger">*</sup>
+                                    <p class="text-danger text-xs mt-1" *ngIf="registerForm.controls['confirmpassword'].invalid && (registerForm.controls['confirmpassword'].dirty || registerForm.controls['confirmpassword'].touched)">
+                                        Debes confirmar la contraseña.
+                                    </p>
+                                    <p class="text-danger text-xs mt-1" *ngIf="registerForm.controls['confirmpassword'].value !== registerForm.controls['password'].value && registerForm.controls['confirmpassword'].dirty">
+                                        Las contraseñas no coinciden.
+                                    </p>
+                                </label>
+                                <div class="relative">
+                                    <input  [type]="showPassword1 ? 'text' : 'password'" type="password" class="form-control create-password-input" id="signup-confirmpassword" placeholder="Confirmar Contraseña" autocomplete formControlName="confirmpassword" required>
+                                    <a href="javascript:void(0);" class="show-password-button text-textmuted dark:text-textmuted/50" (click)="togglePassword1()"  id="button-addon21"><i class="{{toggleClass1}} align-middle"></i></a>
+                                </div>
+                                <div class="form-check mt-3">
+                                    <input class="form-check-input" type="checkbox" value="" id="defaultCheck1"  formControlName="termsCoditions" required>
+                                    <label class="form-check-label text-textmuted dark:text-textmuted/50 font-normal text-[14px]" for="defaultCheck1">
+                                    </label>
+                                    Al crear una cuenta, aceptas nuestros
+                                    <a  class="text-success"><u>Términos & Condiciones</u></a> y <a class="text-success"><u>Política de Privacidad</u></a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="grid mt-4">
+                        <a class="ti-btn ti-btn-primary" (click)="Submit()">Crear Cuenta</a>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-textmuted dark:text-textmuted/50 mt-3 mb-0">¿Ya tienes una cuenta? <a href="auth/login" class="text-primary">Iniciar Sesión</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

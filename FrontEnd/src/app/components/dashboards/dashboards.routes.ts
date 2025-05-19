@@ -5,6 +5,7 @@ import { ConsultaAbonadosComponent } from '../abonados/consulta-abonados/consult
 import { CargaMasivaAbonadosComponent } from '../abonados/carga-masiva-abonados/carga-masiva-abonados.component';
 import { AuthGuard } from '../../guards/auth.guard';
 import { LogDisplayComponent } from '../log-display/log-display.component';
+import { SuperUserManagementComponent } from '../super-user-management/super-user-management.component';
 
 export const admin: Routes = [
  {path:'nuplinTV',children:[ {
@@ -16,22 +17,27 @@ export const admin: Routes = [
 {
   path: 'gestion-usuarios/consulta',
   component: ConsultaUsuariosComponent, 
-  canActivate: [AuthGuard], data: { role: 'user' }// Ruta para consulta de usuarios
+  canActivate: [AuthGuard], data: { role: '1' }// Ruta para consulta de usuarios
 },
 {
   path: 'abonados/consulta',
   component: ConsultaAbonadosComponent, 
-  canActivate: [AuthGuard], data: { role: 'admin' }// Ruta para consulta de abonados
+  canActivate: [AuthGuard], data: { role: '1' }// Ruta para consulta de abonados
 },
 {
   path: 'abonados/carga-masiva',
   component: CargaMasivaAbonadosComponent, 
-  canActivate: [AuthGuard], data: { role: 'admin' }// Ruta para carga masiva de abonados
+  canActivate: [AuthGuard], data: { role: '1' }// Ruta para carga masiva de abonados
 },
 {
   path: 'log/log-usuarios',
   component: LogDisplayComponent, 
-  canActivate: [AuthGuard], data: { role: 'admin' }// Ruta para carga masiva de abonados
+  canActivate: [AuthGuard], data: { role: '1' }// Ruta para carga masiva de abonados
+},
+{
+  path: 'managementSuper/user',
+  component: SuperUserManagementComponent, 
+  canActivate: [AuthGuard], data: { role: '1' }// Ruta para carga masiva de abonados
 },
 ]}
 ];
