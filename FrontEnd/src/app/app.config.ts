@@ -1,5 +1,5 @@
 import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter, RouterOutlet } from '@angular/router';
+import { provideRouter, RouterOutlet, withDebugTracing } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { routes } from './app.routes';
 import { BrowserModule } from '@angular/platform-browser';
@@ -10,7 +10,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { FlatpickrModule } from 'angularx-flatpickr';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes),RouterOutlet,BrowserModule,
+  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes,withDebugTracing()),RouterOutlet,BrowserModule,
     importProvidersFrom(
      FlatpickrModule.forRoot(),
      BrowserAnimationsModule,

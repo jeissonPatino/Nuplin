@@ -1,6 +1,6 @@
-<div class="box {{card.cardClass}}">
+<div *ngIf="card.rol === userRole" [routerLink]="[card.route]" class="box {{card.cardClass}}">
   <div class="box-body">
-      <div *ngIf="card.rol === userRole" [routerLink]="[card.route]" class="flex items-start justify-between {{card.customClass}}">
+      <div  class="flex items-start justify-between {{card.customClass}}">
         <div class="{{card.customClass1}}">
           <ng-container *ngIf="card.titleClass; else defaultTitle">
             <span class="text-textmuted dark:text-textmuted/50 block mb-1 {{card.titleClass}}">

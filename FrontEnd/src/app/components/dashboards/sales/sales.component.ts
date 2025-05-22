@@ -40,16 +40,11 @@ export class SalesComponent {
       customClass:"justify-content-between align-items-start  mb-2",
       valueClass:"fw-medium mb-0",
       titleClass:"d-block mb-1" ,
-      title:"Total Products",
-      value:"854",
-      graph:"increased",
-      color:"success",
-      percentage:"2.56%",
-      percentageIcon:"ti ti-arrow-narrow-up fs-16",
+      title:"Registra tu vehiculo",
       bg:"primary",
       icon:"ti ti-car",
-      rol: '2',
-      route:'user/vehicleRegistration'
+      rol: 2,
+      route:'/nuplinTV/vehicleRegistration'
     },
     {
       id:2,
@@ -65,7 +60,7 @@ export class SalesComponent {
       percentageIcon:"ti ti-arrow-narrow-up fs-16",
       bg:"primarytint1color",
       icon:"ti ti-car",
-      rol: '1',
+      rol: 1,
       route:''
     },
     {
@@ -82,7 +77,7 @@ export class SalesComponent {
       percentageIcon:"ti ti-arrow-narrow-up fs-16",
       bg:"primarytint2color",
       icon:"ti ti-currency-dollar",
-      rol: '1',
+      rol: 1,
       route:''
     }
   ]

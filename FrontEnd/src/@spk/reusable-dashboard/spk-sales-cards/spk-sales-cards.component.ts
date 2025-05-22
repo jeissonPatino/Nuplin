@@ -31,7 +31,7 @@ export class SpkSalesCardsComponent {
     title?: string ;
     svgClass?: string ;
     percentageIcon?: string ;
-    rol?: string;
+    rol?: number;
     route?: string;
    svg?: any; 
  };
@@ -49,7 +49,6 @@ export class SpkSalesCardsComponent {
  }
 
  ngOnInit() {
-  debugger;
     this.userRole = this.authService.getUserRole()
   }
 

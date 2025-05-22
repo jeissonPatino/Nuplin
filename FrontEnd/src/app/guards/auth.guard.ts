@@ -16,7 +16,7 @@ export class AuthGuard implements CanActivate {
     const userRole = Number(this.authService.getUserRole());
   
     if (userRole) {
-      debugger;
+      
       if (expectedRoles.includes(userRole)) {
         return true;
       }

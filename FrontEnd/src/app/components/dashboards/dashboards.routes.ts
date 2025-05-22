@@ -7,6 +7,9 @@ import { AuthGuard } from '../../guards/auth.guard';
 import { LogDisplayComponent } from '../log-display/log-display.component';
 import { SuperUserManagementComponent } from '../super-user-management/super-user-management.component';
 import { VehicleRegistrationComponentTsComponent } from '../vehicle-registration/vehicle-registration.component.ts.component'
+import { UserProfileComponent } from '../user-profile/user-profile.component';
+import { AppointmentSchedulingComponent } from '../appointment-scheduling/appointment-scheduling.component';
+import { SupplyInventoryComponent } from '../supply-inventory/supply-inventory.component';
 
 export const admin: Routes = [
  {path:'nuplinTV',children:[ {
@@ -41,9 +44,29 @@ export const admin: Routes = [
   canActivate: [AuthGuard], data: { role: 1 }// Ruta para carga masiva de abonados
 },
 {
-  path: 'user/vehicleRegistration',
+  path: 'vehicleRegistration',
   component: VehicleRegistrationComponentTsComponent, 
   canActivate: [AuthGuard], data: { role: 2 }
+},
+{
+  path: 'profileUser',
+  component: UserProfileComponent, 
+  canActivate: [AuthGuard], data: { role: [1,2,3,4] }
+},
+{
+  path: 'appointmentScheduling',
+  component: AppointmentSchedulingComponent, 
+  canActivate: [AuthGuard], data: { role: 2 }
+},
+{
+  path: 'operatorAssignmentComponent',
+  component: UserProfileComponent, 
+  canActivate: [AuthGuard], data: { role: [3,4] }
+},
+{
+  path: 'supplyInventory',
+  component: SupplyInventoryComponent, 
+  canActivate: [AuthGuard], data: { role: 4 }
 },
 ]}
 ];
