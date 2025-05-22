@@ -25,7 +25,6 @@ export class SalesComponent {
     document.querySelector('.single-page-header')?.classList.add('hidden');
   }
   ngOnInit() {
-    debugger;
     this.cdr.detectChanges(); 
   }
 
@@ -48,7 +47,9 @@ export class SalesComponent {
       percentage:"2.56%",
       percentageIcon:"ti ti-arrow-narrow-up fs-16",
       bg:"primary",
-      icon:"ti ti-shopping-cart",
+      icon:"ti ti-car",
+      rol: '2',
+      route:'user/vehicleRegistration'
     },
     {
       id:2,
@@ -63,7 +64,9 @@ export class SalesComponent {
       percentage:"0.34%",
       percentageIcon:"ti ti-arrow-narrow-up fs-16",
       bg:"primarytint1color",
-      icon:"ti ti-users"
+      icon:"ti ti-car",
+      rol: '1',
+      route:''
     },
     {
       id:3,
@@ -78,7 +81,9 @@ export class SalesComponent {
       percentage:"7.66%",
       percentageIcon:"ti ti-arrow-narrow-up fs-16",
       bg:"primarytint2color",
-      icon:"ti ti-currency-dollar"
+      icon:"ti ti-currency-dollar",
+      rol: '1',
+      route:''
     }
   ]
 

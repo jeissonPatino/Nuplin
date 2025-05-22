@@ -7,6 +7,8 @@ import { HttpClient } from '@angular/common/http';
 import { LoginResponse } from '../models/LoginResponse';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
+import { UsuarioCliente } from '../models/UsuarioCliente';
+import { UsuarioAdministrador } from '../models/usuarioAdministrador';
 
 
 @Injectable({
@@ -29,30 +31,34 @@ getUsuarios(fechaInicio: string, fechaFin: string, paquete?: string): Observable
     return this.http.get(url);
 }
 
-  // Actualizar uno o varios usuarios
-  updateUser(listaUsuarios: any[]): Observable<any> {
-    return this.http.put(`${this.apiUrl}/actualizar`, listaUsuarios);
-}
+ updateUser(usuarioId: string, userData: any): Observable<any> {
+    const url = `${this.apiUrl}/actualizar/${usuarioId}`;
+    return this.http.put(url, userData);
+  }
+  
+  createUserAdmin(listaUsuarios: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/crearAdmin`, listaUsuarios);
+  }
 
-  // Crear uno o varios usuarios
-  createUser(listaUsuarios: any[]): Observable<any> {
-    return this.http.post(`${this.apiUrl}/crear`, listaUsuarios);
+  createUser(listaUsuarios: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/crearAdmin`, listaUsuarios);
   }
 
   // Eliminar usuarios por lista de IDs
-  deleteUser(listaIDUsuarios: number[]): Observable<any> {
-    return this.http.put(`${this.apiUrl}/desactivar`, listaIDUsuarios);
+  deleteUser(usuarioId: string): Observable<any> { 
+    const url = `${this.apiUrl}/desactivar/${usuarioId}`; 
+    return this.http.delete(url);
+  }
+
+
+getUsuariosAdministrador():Observable<UsuarioAdministrador[]>{
+  let url = `${this.apiUrl}/usuarios-administrador`;
+  return this.http.get<UsuarioAdministrador[]>(url);
 }
 
-
-getUsuariosAdministrador():Observable<any>{
-  let url = `${this.apiUrl}clientes/usuarios-administrador`;
-  return this.http.get(url);
-}
-
-getUsuariosClientesVehiculos():Observable<any>{
-  let url = `${this.apiUrl}clientes/esuarios-clientes-vehiculos`;
-  return this.http.get(url);
+getUsuariosClientesVehiculos():Observable<UsuarioCliente[]>{
+  let url = `${this.apiUrl}/esuarios-clientes-vehiculos`;
+  return this.http.get<UsuarioCliente[]>(url);
 }
 
 

@@ -91,7 +91,6 @@ export class AuthService {
 
   //se obtiene el rol del usuario
   getUserRole(): number | null {
-    debugger;
     let userType = this.encryptionService.getRoleFromToken();
     if (!userType) return null;
     try {
@@ -134,7 +133,7 @@ export class AuthService {
     password += numeros.charAt(Math.floor(Math.random() * numeros.length));
     password += especiales.charAt(Math.floor(Math.random() * especiales.length));
     const todos = caracteres + mayusculas + numeros + especiales;
-    while (password.length < 12) {
+    while (password.length < 10) {
       password += todos.charAt(Math.floor(Math.random() * todos.length));
     }
     return password.split('').sort(() => 0.5 - Math.random()).join('');

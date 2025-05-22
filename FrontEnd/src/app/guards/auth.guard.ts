@@ -10,11 +10,14 @@ export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    const expectedRole = route.data['role']; 
-    const user = this.authService.getUserRole(); 
+    const expectedRoles = Array.isArray(route.data['role'])
+    ? route.data['role'].map(Number)       // Convertimos todos los roles a números
+    : [Number(route.data['role'])];        // Lo hacemos array de 1 solo número
+    const userRole = Number(this.authService.getUserRole());
   
-    if (user) {
-      if (user === 1 || user === expectedRole) {
+    if (userRole) {
+      debugger;
+      if (expectedRoles.includes(userRole)) {
         return true;
       }
     }

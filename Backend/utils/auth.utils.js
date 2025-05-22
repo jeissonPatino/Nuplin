@@ -50,6 +50,29 @@ exports.enviarCodigoVerificacion = async (email) => {
   }
 };
 
+exports.enviarCorreoNuevoUsuario = async (email, nombre, password) => {
+  const mailOptions = {
+    from: mailConfig.auth.user,
+    to: email,
+    subject: 'Bienvenido a NuplinTv - Detalles de su cuenta de Administrador',
+    html: `<p>Hola ${nombre},</p>
+           <p>Se ha creado una cuenta de administrador para usted en NuplinTv.</p>
+           <p>Su contraseña temporal es: <strong>${password}</strong></p>
+           <p>Por favor, inicie sesión con esta contraseña y considere cambiarla por una más segura.</p>
+           <p>Gracias,</p>
+           <p>El equipo de NuplinTv</p>`,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Correo electrónico de nuevo usuario enviado:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('Error al enviar el correo electrónico de nuevo usuario:', error);
+    return false;
+  }
+};
+
 exports.verificarCodigo = async (email, codigoIngresado) => {
   try {
     const results = await new Promise((resolve, reject) => {

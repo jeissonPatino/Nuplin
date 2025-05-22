@@ -29,7 +29,7 @@ export const routes: Routes = [
       component: RegisterUserComponent,
       
     },
-    { path: '', component: ContentLayoutComponent, children: content ,canActivate: [AuthGuard], data: { role: 1 } },
-    { path: '', component: AuthenticationLayoutComponent, children: authen  ,canActivate: [AuthGuard], data: { role: 1 }},
+    { path: '', component: ContentLayoutComponent, children: content },
+    { path: '', component: AuthenticationLayoutComponent, children: authen  ,canActivate: [AuthGuard], data: { role: [1,2,3,4] }},
     { path: '**', redirectTo: '/error/acceso-denegado', pathMatch: 'full' },
 ];

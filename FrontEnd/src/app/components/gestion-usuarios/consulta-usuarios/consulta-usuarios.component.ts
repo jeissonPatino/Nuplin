@@ -131,7 +131,7 @@ export class ConsultaUsuariosComponent implements OnInit, OnDestroy {
 
   handleSave(data: Usuario) {
     if (this.isEditing) {
-      this.gestionUsuariosService.updateUser([data]).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
+      this.gestionUsuariosService.updateUser('1', data).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
         (updatedUsers: Usuario[]) => {
           if (updatedUsers && updatedUsers.length > 0) {
             this.toastr.success('Usuario actualizado correctamente.', 'Éxito');

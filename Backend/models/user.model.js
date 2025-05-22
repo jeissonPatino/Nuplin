@@ -35,15 +35,21 @@ const Usuario = {
   },
 
   actualizar: (usuario, callback) => {
-    dbConfig.connection.query('UPDATE usuarios SET password = ?, nombre = ?, apellido = ?, id_rol = ?, estado = ? WHERE id = ?',
-      [usuario.password, usuario.nombre, usuario.apellido, usuario.id_rol, usuario.estado, usuario.id],
-      (err, results) => {
-        if (err) {
-          console.error('Error al actualizar usuario:', err);
-          return callback(err, null);
-        }
-        callback(null, results.affectedRows);
-      });
+    let sql = 'UPDATE usuarios SET estado = ? WHERE id = ?';
+    const values = [usuario.estado, usuario.id];
+
+    if (usuario.password !== undefined && usuario.password !== '') {
+      sql = 'UPDATE usuarios SET password = ?, estado = ? WHERE id = ?';
+      values.unshift(usuario.password);
+    }
+
+    dbConfig.connection.query(sql, values, (err, results) => {
+      if (err) {
+        console.error('Error al actualizar usuario:', err);
+        return callback(err, null);
+      }
+      callback(null, results.affectedRows);
+    });
   },
 
   eliminar: (id, callback) => {

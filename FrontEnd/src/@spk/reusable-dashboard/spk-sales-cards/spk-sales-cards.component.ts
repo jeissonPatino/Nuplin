@@ -1,17 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { AuthService } from '../../../app/shared/services/auth.service'
+import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'spk-sales-cards',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './spk-sales-cards.component.html',
   styleUrl: './spk-sales-cards.component.scss'
 })
-export class SpkSalesCardsComponent {
-  @Input() card!: {
 
+export class SpkSalesCardsComponent {
+  userRole: any;
+  @Input() card!: {
     value?: string ;
     graph?: string ;
     valueClass?: string ;
@@ -27,14 +31,31 @@ export class SpkSalesCardsComponent {
     title?: string ;
     svgClass?: string ;
     percentageIcon?: string ;
+    rol?: string;
+    route?: string;
    svg?: any; 
  };
 
- constructor(private sanitizer: DomSanitizer) {}
+ constructor(
+    private sanitizer: DomSanitizer,
+    private authService: AuthService,
+    private router: Router,
+ ) {}
  sanitizeHtml(html: string): SafeHtml {
    return this.sanitizer.bypassSecurityTrustHtml(html);
  }
  sanitizeIcon(svg: string): SafeHtml {
    return this.sanitizer.bypassSecurityTrustHtml(svg);
  }
+
+ ngOnInit() {
+  debugger;
+    this.userRole = this.authService.getUserRole()
+  }
+
+  ngOnDestroy(){
+    document.querySelector('.single-page-header')?.classList.remove('hidden');
+  }
+
+
 }

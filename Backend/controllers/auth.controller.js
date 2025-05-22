@@ -6,7 +6,6 @@ const { secret } = require('../config/config');
 
 exports.registro = async (req, res) => {
   try {
-    debugger;
     const { firstname, lastname, email, password, NumberIdentification, typeIdentification } = req.body; // Obtén NumberIdentification
 
     // 1. Verificar si el NumberIdentification ya existe (asumiendo que 'id' en tu tabla es para NumberIdentification)
