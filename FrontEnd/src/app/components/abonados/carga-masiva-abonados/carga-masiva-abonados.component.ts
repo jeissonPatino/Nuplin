@@ -63,7 +63,7 @@ export class CargaMasivaAbonadosComponent implements AfterViewInit {
     if (file) {
       const fileName = file.name.toLowerCase();
       if (!fileName.endsWith('.csv')) {
-        this.toastr.error('Solo se permiten archivos con formato .csv', 'NuplinTv', { timeOut: 5000 });
+        this.toastr.error('Solo se permiten archivos con formato .csv', 'CMT_Movitlity', { timeOut: 5000 });
         this.myPond.removeFile(event.file);
         return;
       }

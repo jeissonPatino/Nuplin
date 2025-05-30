@@ -14,16 +14,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'NuplinTV' title`, () => {
+  it(`should have the 'CMT_Movitlity' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('NuplinTV');
+    expect(app.title).toEqual('CMT_Movitlity');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, NuplinTV');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, CMT_Movitlity');
   });
 });

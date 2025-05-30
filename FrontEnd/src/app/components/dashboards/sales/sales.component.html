@@ -6,19 +6,73 @@
     </div>
 </div>
 <!-- End::page-header -->
+ <div *ngIf="!userRole"> 
+   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
 
-<!-- Start::Row-1 -->
-<div class="grid grid-cols-12 gap-x-6">
-    <div class="xl:col-span-8 col-span-12">
-        <div class="grid grid-cols-12 gap-x-6">
-        @for(card of cardData;track $index){
-            <div class="xxl:col-span-6 xl:col-span-6 col-span-12">
-                <spk-sales-cards [card]="card"></spk-sales-cards>
-            </div>
-        }
-        </div>
+  <div class="box p-4 flex items-center justify-between shadow-md rounded-lg">
+    <div class="flex items-center">
+      <div class="flex-shrink-0 bg-blue-100 dark:bg-blue-900 rounded-full p-3">
+        <i class="ri-user-line text-blue-500 text-2xl"></i>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Clientes</p>
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">{{ conteosClientes?.total_clientes || 0 }}</h3>
+      </div>
     </div>
+    </div>
+
+  <div class="box p-4 flex items-center justify-between shadow-md rounded-lg">
+    <div class="flex items-center">
+      <div class="flex-shrink-0 bg-green-100 dark:bg-green-900 rounded-full p-3">
+        <i class="ri-check-circle-line text-green-500 text-2xl"></i>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Activos (Con Servicios)</p>
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">{{ conteosClientes?.activos_con_agendamiento || 0 }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="box p-4 flex items-center justify-between shadow-md rounded-lg">
+    <div class="flex items-center">
+      <div class="flex-shrink-0 bg-yellow-100 dark:bg-yellow-900 rounded-full p-3">
+        <i class="ri-question-line text-yellow-500 text-2xl"></i>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Activos (Sin Servicios)</p>
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">{{ conteosClientes?.activos_sin_agendamiento || 0 }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="box p-4 flex items-center justify-between shadow-md rounded-lg">
+    <div class="flex items-center">
+      <div class="flex-shrink-0 bg-red-100 dark:bg-red-900 rounded-full p-3">
+        <i class="ri-close-circle-line text-red-500 text-2xl"></i>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Inactivos</p>
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">{{ conteosClientes?.inactivos_totales || 0 }}</h3>
+      </div>
+    </div>
+  </div>
 </div>
+  <!-- Start::Row-1 -->
+  <div  class="md:col-span-12 xxl:col-span-6 col-span-12">
+      <div class="box ">
+          <div class="box-header justify-between">
+              <div class="box-title">Reporte Ventas</div>
+              
+          </div>
+          <div class="box-body">
+              <div id="sales-overview-crm">
+                  <spk-apexcharts [chartOptions]="chartOptions2"></spk-apexcharts>
+              </div>
+          </div>
+      </div>
+  </div>
+ </div>
+  
 <!-- End::Row-1 -->
 
 <!-- Start::Row-2 -->

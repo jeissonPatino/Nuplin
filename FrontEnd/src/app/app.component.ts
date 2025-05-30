@@ -12,7 +12,7 @@ import { SharedModule } from './shared/shared.module';
 })
 
 export class AppComponent {
-  title = 'NuplinTv';
+  title = 'CMT_Movitlity';
   constructor(private appState : AppStateService,private router:Router, private appStateService: AppStateService,){
     this.appState.updateState();
   }

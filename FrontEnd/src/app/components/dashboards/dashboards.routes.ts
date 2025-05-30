@@ -10,9 +10,11 @@ import { VehicleRegistrationComponentTsComponent } from '../vehicle-registration
 import { UserProfileComponent } from '../user-profile/user-profile.component';
 import { AppointmentSchedulingComponent } from '../appointment-scheduling/appointment-scheduling.component';
 import { SupplyInventoryComponent } from '../supply-inventory/supply-inventory.component';
+import { ServiceReportComponent } from '../service-report/service-report.component';
+import { CustomerCountReportComponent } from '../customer-count-report/customer-count-report.component';
 
 export const admin: Routes = [
- {path:'nuplinTV',children:[ {
+ {path:'CMT_Movitlity',children:[ {
   path: 'inicio',
   loadComponent: () =>
     import('./sales/sales.component').then((m) => m.SalesComponent),
@@ -21,27 +23,37 @@ export const admin: Routes = [
 {
   path: 'gestion-usuarios/consulta',
   component: ConsultaUsuariosComponent, 
-  canActivate: [AuthGuard], data: { role: 1 }// Ruta para consulta de usuarios
+  canActivate: [AuthGuard], data: { role: 1 }
 },
 {
   path: 'abonados/consulta',
   component: ConsultaAbonadosComponent, 
-  canActivate: [AuthGuard], data: { role: 1 }// Ruta para consulta de abonados
+  canActivate: [AuthGuard], data: { role: 1 }
 },
 {
   path: 'abonados/carga-masiva',
   component: CargaMasivaAbonadosComponent, 
-  canActivate: [AuthGuard], data: { role: 1 }// Ruta para carga masiva de abonados
+  canActivate: [AuthGuard], data: { role: 1 }
 },
 {
   path: 'log/log-usuarios',
   component: LogDisplayComponent, 
-  canActivate: [AuthGuard], data: { role: 1 }// Ruta para carga masiva de abonados
+  canActivate: [AuthGuard], data: { role: 1 }
 },
 {
   path: 'managementSuper/user',
   component: SuperUserManagementComponent, 
-  canActivate: [AuthGuard], data: { role: 1 }// Ruta para carga masiva de abonados
+  canActivate: [AuthGuard], data: { role: 1 }
+},
+{
+  path: 'Reports/ReportService',
+  component: ServiceReportComponent, 
+  canActivate: [AuthGuard], data: { role: 1 }
+},
+{
+  path: 'Reports/countUser',
+  component: CustomerCountReportComponent, 
+  canActivate: [AuthGuard], data: { role: 1 }
 },
 {
   path: 'vehicleRegistration',

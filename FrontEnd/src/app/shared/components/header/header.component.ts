@@ -396,7 +396,7 @@ export class HeaderComponent {
   getUserSessionData() {
   const email = this.encryptionService.getEmailFromToken();
   if (!email) {
-    this.toastr.error('No hay datos de usuario, validar con el admin', 'NuplinTv', { timeOut: 5000 });
+    this.toastr.error('No hay datos de usuario, validar con el admin', 'CMT_Movitlity', { timeOut: 5000 });
   } else {
     this.autService.getUserSessionData(email)
       .subscribe(
@@ -405,7 +405,7 @@ export class HeaderComponent {
         },
         (error) => {
           console.error('Error al obtener datos del usuario:', error);
-          this.toastr.error('Error al obtener datos del usuario', 'NuplinTv', { timeOut: 5000 });
+          this.toastr.error('Error al obtener datos del usuario', 'CMT_Movitlity', { timeOut: 5000 });
         }
       );
   }

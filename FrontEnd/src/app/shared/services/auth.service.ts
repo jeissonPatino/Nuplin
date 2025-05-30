@@ -140,7 +140,7 @@ export class AuthService {
   }
 
   logout(): void {
-    this.toastr.warning('Cerrando su sesión', 'NuplinTv', { timeOut: 5000 });
+    this.toastr.warning('Cerrando su sesión', 'CMT_Movitlity', { timeOut: 5000 });
     sessionStorage.removeItem('JWT');
     sessionStorage.removeItem('currentUser');
     sessionStorage.removeItem('sessionStartTime');

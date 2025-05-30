@@ -4,7 +4,6 @@ import { SharedModule } from '../../../shared/shared.module';
 import { FormsModule } from '@angular/forms';
 import { FlatpickrModule } from 'angularx-flatpickr';
 import { SpkFlatpickrComponent } from '../../../../@spk/spk-flatpickr/spk-flatpickr.component';
-import { ModalUsuariosComponent } from '../../../shared/components/modals/modal-usuarios/modal-usuarios.component';
 import { CommonModule } from '@angular/common';
 import { Usuario } from '../../../shared/models/usuario';
 import { GestionUsuariosService } from '../../../shared/services/gestion-usuarios.service';
@@ -18,7 +17,7 @@ import { LogUsuarioService } from '../../../shared/services/log-usuario.service'
 
 @Component({
   selector: 'app-consulta-usuarios',
-  imports: [SharedModule, SpkReusableTablesComponent, FormsModule, FlatpickrModule, SpkFlatpickrComponent, ModalUsuariosComponent, CommonModule, SpkNgSelectComponent],
+  imports: [SharedModule, SpkReusableTablesComponent, FormsModule, FlatpickrModule, SpkFlatpickrComponent,  CommonModule, SpkNgSelectComponent],
   templateUrl: './consulta-usuarios.component.html',
   styleUrl: './consulta-usuarios.component.scss'
 })

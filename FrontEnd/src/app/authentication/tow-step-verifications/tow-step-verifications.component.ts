@@ -104,7 +104,7 @@ export class TowStepVerificationsComponent implements OnInit, OnDestroy {
           sessionStorage.setItem('JWT', response.token);
           sessionStorage.setItem('sessionStartTime', Date.now().toString());
           this.crearLog('LOGIN', 'Usuario autenticado correctamente', 'INFO', 'LOGIN');
-          this.router.navigate(['/nuplinTV/inicio']);
+          this.router.navigate(['/CMT_Movitlity/inicio']);
         } else {
           this.crearLog('LOGIN', 'Ocurrió un error con la autenticación', 'ERROR', 'LOGIN');
           this.toastr.error(response?.message || 'El código es incorrecto', 'Nuplin', {

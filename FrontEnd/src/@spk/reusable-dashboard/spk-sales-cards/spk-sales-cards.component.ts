@@ -13,7 +13,7 @@ import { RouterModule } from '@angular/router';
   styleUrl: './spk-sales-cards.component.scss'
 })
 
-export class SpkSalesCardsComponent {
+export class SpkSalesCardsComponent { 
   userRole: any;
   @Input() card!: {
     value?: string ;
@@ -33,7 +33,7 @@ export class SpkSalesCardsComponent {
     percentageIcon?: string ;
     rol?: number;
     route?: string;
-   svg?: any; 
+    svg?: any; 
  };
 
  constructor(

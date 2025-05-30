@@ -96,7 +96,7 @@ export class RememberPasswordComponent {
       const confPass = group.get('confPass')?.value;
   
       if (newPass && confPass && newPass !== confPass) {
-        toastr.error('Las contraseñas no coinciden', 'NuplinTv', { 
+        toastr.error('Las contraseñas no coinciden', 'CMT_Movitlity', { 
           timeOut: 3000, 
           positionClass: 'toast-top-right' 
         });

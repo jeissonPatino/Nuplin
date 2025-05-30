@@ -1,0 +1,105 @@
+<div class="flex items-center justify-between page-header-breadcrumb flex-wrap gap-2">
+  <div>
+    <h1 class="page-title font-medium text-lg mb-0">Reportes</h1>
+    <p class="mb-0 text-sm text-textmuted dark:text-white/50">
+      <span class="text-xs text-textmuted dark:text-white/50 font-semibold align-middle">Conteo de Clientes</span>
+    </p>
+  </div>
+</div>
+<div class="col-span-12 lg:col-span-12">
+  <div class="box">
+    <div class="box-header">
+      <h5 class="box-title">Reporte de Conteo y Detalle de Clientes</h5>
+    </div>
+    <div class="box-body">
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+        <div>
+          <label for="filtroPlaca" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Placa Vehículo:</label>
+          <input type="text" id="filtroPlaca" [(ngModel)]="filtroPlaca"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            placeholder="Ej: ABC-123">
+        </div>
+        <div>
+          <label for="filtroIdentificacion" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Número Identificación:</label>
+          <input type="text" id="filtroIdentificacion" [(ngModel)]="filtroNumeroIdentificacion"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            placeholder="Ej: 123456789">
+        </div>
+        <div>
+          <label for="filtroEstado" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Estado:</label>
+          <select id="filtroEstado" [(ngModel)]="filtroEstado"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            <option value="todos">Todos</option>
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+          </select>
+        </div>
+        <div>
+          <label for="filtroServicios" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Con/Sin Agendamientos:</label>
+          <select id="filtroServicios" [(ngModel)]="filtroConServicios"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            <option value="todos">Todos</option>
+            <option value="true">Con Agendamientos</option>
+            <option value="false">Sin Agendamientos</option>
+          </select>
+        </div>
+        <div class="flex items-end col-span-full md:col-span-1">
+          <button (click)="generarReporte()"
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 w-full">Generar Reporte</button>
+        </div>
+      </div>
+
+      <div *ngIf="conteosClientes" class="mb-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm">
+        <h6 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">Resumen de Clientes:</h6>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 text-gray-700 dark:text-gray-300">
+          <p><strong>Total Clientes:</strong> {{ conteosClientes.total_clientes }}</p>
+          <p><strong>Activos (con agendamiento):</strong> {{ conteosClientes.activos_con_agendamiento }}</p>
+          <p><strong>Activos (sin agendamiento):</strong> {{ conteosClientes.activos_sin_agendamiento }}</p>
+          <p><strong>Inactivos:</strong> {{ conteosClientes.inactivos_totales }}</p>
+          <p><strong>Activos Totales:</strong> {{ conteosClientes.activos_totales }}</p>
+        </div>
+      </div>
+
+
+      <div *ngIf="detalleClientes.length > 0" class="overflow-x-auto shadow-md sm:rounded-lg mt-4">
+        <h6 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">Detalle de Clientes:</h6>
+        <table class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th scope="col" class="px-6 py-3">Nombre</th>
+              <th scope="col" class="px-6 py-3">Número Identificación</th>
+              <th scope="col" class="px-6 py-3">Correo</th>
+              <th scope="col" class="px-6 py-3">Estado</th>
+              <th scope="col" class="px-6 py-3">Vehículo (Placa)</th>
+              <th scope="col" class="px-6 py-3">Último Agendamiento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cliente of detalleClientes; let i = index"
+              class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+              <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                {{ cliente.nombre }} {{ cliente.apellido }}
+              </th>
+              <td class="px-6 py-4">{{ cliente.numero_identificacion }}</td>
+              <td class="px-6 py-4">{{ cliente.correo }}</td>
+              <td class="px-6 py-4">{{ cliente.estado }}</td>
+              <td class="px-6 py-4">{{ cliente.placa_vehiculo || 'Sin vehículo' }}</td>
+              <td class="px-6 py-4">
+                {{ cliente.fecha_ultimo_agendamiento ? (cliente.fecha_ultimo_agendamiento | date:'yyyy-MM-dd HH:mm') : 'Sin agendamientos' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="detalleClientes.length === 0 && conteosClientes" class="text-center py-4 text-gray-600 dark:text-gray-400">
+        <p>No se encontraron clientes que coincidan con los filtros aplicados.</p>
+      </div>
+      <div *ngIf="!conteosClientes" class="text-center py-4 text-gray-600 dark:text-gray-400">
+        <p>Genera el reporte para ver el conteo y detalle de clientes.</p>
+      </div>
+
+    </div>
+  </div>
+</div>

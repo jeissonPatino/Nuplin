@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "NuplinTV": {
+    "CMT_Movitlity": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -95,10 +95,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "NuplinTV:build:production"
+              "buildTarget": "CMT_Movitlity:build:production"
             },
             "development": {
-              "buildTarget": "NuplinTV:build:development"
+              "buildTarget": "CMT_Movitlity:build:development"
             }
           },
           "defaultConfiguration": "development"

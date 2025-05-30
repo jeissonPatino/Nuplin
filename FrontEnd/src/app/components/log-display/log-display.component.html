@@ -1,67 +1,97 @@
-<div class="container mx-auto p-4">
-    <h2 class="text-2xl font-bold mb-4">Registro de Actividad del Usuario</h2>
-  
-    <div *ngIf="loading" class="text-center">Cargando registros...</div>
-  
-    <div *ngIf="error" class="text-red-500 text-center">{{ error }}</div>
-  
-    <div *ngIf="logs.length > 0 && !loading && !error">
-        <div class="flex justify-end mb-4">
-            <button class="ti-btn ti-btn-sm ti-btn-info ml-2" (click)="updateExportData()">
-              Exportar a Excel
-            </button>
-          </div>
-      <spk-reusable-tables
-        [columns]="responsiveColumn"
-        tableHeadColumn="text-start"
-        tableClass="ti-custom-table whitespace-nowrap min-w-full"
-        trClass="border-b border-defaultborder dark:border-defaultborder/10"
-        [showCheckbox]="false"
-      >
-        <ng-container *ngFor="let log of paginatedData; track $index">
-          <tr>
-            <td>{{ log.emialUsuario }}</td>
-            <td>{{ log.mensaje }}</td>
-          </tr>
-        </ng-container>
-      </spk-reusable-tables>
-  
-      <div class="flex justify-center mt-4" *ngIf="totalPages() > 1">
-        <nav class="flex items-center gap-x-2">
-          <button
-            type="button"
-            (click)="changePage(currentPage - 1)"
-            [disabled]="currentPage === 1"
-            class="min-h-[38px] min-w-[38px] flex justify-center items-center text-gray-500 hover:text-blue-600 disabled:opacity-50"
-          >
-            <i class="ri-arrow-left-s-line text-lg"></i>
-          </button>
-  
-          <div class="flex items-center gap-x-2">
-            <button
-              type="button"
-              (click)="changePage(page)"
-              [class.border-blue-500]="page === currentPage"
-              [class.text-blue-600]="page === currentPage"
-              [class.bg-blue-100]="page === currentPage"
-              class="min-h-[38px] min-w-[38px] flex justify-center items-center border border-gray-300 rounded-lg text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-all"
-              *ngFor="let page of totalPagesArray; track $index"
-            >
-              {{ page }}
-            </button>
-          </div>
-  
-          <button
-            type="button"
-            (click)="changePage(currentPage + 1)"
-            [disabled]="currentPage === totalPages()"
-            class="min-h-[38px] min-w-[38px] flex justify-center items-center text-gray-500 hover:text-blue-600 disabled:opacity-50"
-          >
-            <i class="ri-arrow-right-s-line text-lg"></i>
-          </button>
-        </nav>
+<!-- Start::page-header -->
+<div class="flex items-center justify-between page-header-breadcrumb flex-wrap gap-2">
+  <div>
+    <h1 class="page-title font-medium text-lg mb-0">Reportes</h1>
+    <p class="mb-0 text-sm text-textmuted dark:text-white/50">
+      <span class="text-xs text-textmuted dark:text-white/50 font-semibold align-middle">Reporte de Ventas</span>
+    </p>
+  </div>
+</div>
+<!-- End::page-header -->
+ <div class="col-span-12 lg:col-span-12">
+  <div class="box">
+    <div class="box-header">
+      <h5 class="box-title">Reporte de Ventas Mensuales</h5>
+    </div>
+    <div class="box-body">
+      <div class="overflow-x-auto shadow-md sm:rounded-lg">
+        <table class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3">
+            Mes
+          </th>
+          <th scope="col" class="px-6 py-3 text-right">
+            Ventas Reales
+          </th>
+          <th scope="col" class="px-6 py-3 text-right">
+            Proyección de Ventas
+          </th>
+          <th scope="col" class="px-6 py-3 text-right">
+            Diferencia (Real - Proyección)
+          </th>
+          <th scope="col" class="px-6 py-3 text-right">
+            % Cumplimiento
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of reportTableData; let i = index" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+          <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            {{ item.month }}
+          </th>
+          <td class="px-6 py-4 text-right">
+            {{ (item.actualSales) }}
+            </td>
+          <td class="px-6 py-4 text-right">
+            {{ (item.projectedSales) }}
+            </td>
+          <td class="px-6 py-4 text-right"
+              [ngClass]="{
+                'text-green-600 dark:text-green-400': (item.actualSales !== null && item.projectedSales !== null) && (item.actualSales - item.projectedSales >= 0),
+                'text-red-600 dark:text-red-400': (item.actualSales !== null && item.projectedSales !== null) && (item.actualSales - item.projectedSales < 0)
+              }">
+            <ng-container *ngIf="item.actualSales !== null && item.projectedSales !== null">
+              {{ (item.actualSales - item.projectedSales) }}
+            </ng-container>
+            <ng-container *ngIf="item.actualSales === null || item.projectedSales === null">
+              -
+            </ng-container>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <ng-container *ngIf="item.actualSales !== null && item.projectedSales !== null && item.projectedSales !== 0">
+              {{ (item.actualSales / item.projectedSales) | percent:'1.0-2' }}
+            </ng-container>
+            <ng-container *ngIf="item.actualSales === null || item.projectedSales === null || item.projectedSales === 0">
+              -
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot class="font-semibold text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700">
+        <tr>
+            <th scope="row" class="px-6 py-3 text-base">Total Anual</th>
+            <td class="px-6 py-3 text-right">{{ (getTotal('actualSales')) }}</td>
+            <td class="px-6 py-3 text-right">{{ (getTotal('projectedSales')) }}</td>
+            <td class="px-6 py-3 text-right"
+                [ngClass]="{
+                  'text-green-600 dark:text-green-400': getTotal('actualSales') - getTotal('projectedSales') >= 0,
+                  'text-red-600 dark:text-red-400': getTotal('actualSales') - getTotal('projectedSales') < 0
+                }">
+                {{ (getTotal('actualSales') - getTotal('projectedSales')) }}
+            </td>
+            <td class="px-6 py-3 text-right">
+              <ng-container *ngIf="getTotal('projectedSales') !== 0">
+                {{ (getTotal('actualSales') / getTotal('projectedSales')) | percent:'1.0-2' }}
+              </ng-container>
+              <ng-container *ngIf="getTotal('projectedSales') === 0">
+                -
+              </ng-container>
+            </td>
+        </tr>
+    </tfoot>
+        </table>
       </div>
     </div>
-  
-    <div *ngIf="logs.length === 0 && !loading && !error" class="text-center mt-4">No hay registros disponibles.</div>
   </div>
+</div>

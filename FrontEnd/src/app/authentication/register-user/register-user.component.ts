@@ -93,46 +93,46 @@ export class RegisterUserComponent implements OnInit, OnDestroy{
   validarDatos() {
     this.validationData = true;
     if (this.registerForm.invalid) {
-      this.toastr.error('Debes llenar el formulario para la creación de la cuenta', 'NuplinTv', { timeOut: 5000 });
+      this.toastr.error('Debes llenar el formulario para la creación de la cuenta', 'CMT_Movitlity', { timeOut: 5000 });
       this.validationData = false;
       return;
     }
     if (!this.registerForm.value['firstname']) {
-      this.toastr.error('Debes Ingresar tus nombres', 'NuplinTv', { timeOut: 5000 });
+      this.toastr.error('Debes Ingresar tus nombres', 'CMT_Movitlity', { timeOut: 5000 });
       return;
     }
     if (!this.registerForm.value['lastname']) {
-      this.toastr.error('Debes Ingresar tus apellidos', 'NuplinTv', { timeOut: 5000 });
+      this.toastr.error('Debes Ingresar tus apellidos', 'CMT_Movitlity', { timeOut: 5000 });
       return;
     }
 
     if (!this.selectedTypeIdentification) {
-      this.toastr.error('Debes seleccionar tu tipo de documento de identificación', 'NuplinTv', { timeOut: 5000 });
+      this.toastr.error('Debes seleccionar tu tipo de documento de identificación', 'CMT_Movitlity', { timeOut: 5000 });
       return;
     }
 
     if (!this.registerForm.value['NumberIdentification']) {
-      this.toastr.error('Debes Ingresar tu número de identificación', 'NuplinTv', { timeOut: 5000 });
+      this.toastr.error('Debes Ingresar tu número de identificación', 'CMT_Movitlity', { timeOut: 5000 });
       return;
     }
 
     if (!this.registerForm.value['email']) {
-      this.toastr.error('Debes Ingresar tu correo', 'NuplinTv', { timeOut: 5000 });
+      this.toastr.error('Debes Ingresar tu correo', 'CMT_Movitlity', { timeOut: 5000 });
       return;
     }
 
     if (!this.registerForm.value['password']) {
-      this.toastr.error('Debes Ingresar una contraseña', 'NuplinTv', { timeOut: 5000 });
+      this.toastr.error('Debes Ingresar una contraseña', 'CMT_Movitlity', { timeOut: 5000 });
       return;
     }
 
     if (!this.registerForm.value['confirmpassword']) {
-      this.toastr.error('Debes Ingresar la confirmación de tu contraseña', 'NuplinTv', { timeOut: 5000 });
+      this.toastr.error('Debes Ingresar la confirmación de tu contraseña', 'CMT_Movitlity', { timeOut: 5000 });
       return;
     }
 
     if (!this.registerForm.value['termsCoditions']) {
-      this.toastr.error('Debes aceptar los términos y condiciones', 'NuplinTv', { timeOut: 5000 });
+      this.toastr.error('Debes aceptar los términos y condiciones', 'CMT_Movitlity', { timeOut: 5000 });
       return;
     }
   }
@@ -144,20 +144,20 @@ export class RegisterUserComponent implements OnInit, OnDestroy{
       this.registerSubscription = this.authservice.registrarCliente(formData).subscribe(
         response => {
           console.log('Registro exitoso', response);
-          this.toastr.success('Cuenta creada exitosamente', 'NuplinTv');
+          this.toastr.success('Cuenta creada exitosamente', 'CMT_Movitlity');
           this.router.navigate(['/auth/login']);
         },
         error => {
           console.error('Error en el registro', error);
-          this.toastr.error('Error al crear la cuenta', 'NuplinTv', { timeOut: 5000 });
+          this.toastr.error('Error al crear la cuenta', 'CMT_Movitlity', { timeOut: 5000 });
           if (error.status === 409) {
-            this.toastr.error(error.error.message, 'NuplinTv', { timeOut: 5000 });
+            this.toastr.error(error.error.message, 'CMT_Movitlity', { timeOut: 5000 });
           }
         }
       );
       
     } else {
-      this.toastr.error('Hubo un error al crear tu cuenta, contacta al administrador', 'NuplinTv', { timeOut: 5000 });
+      this.toastr.error('Hubo un error al crear tu cuenta, contacta al administrador', 'CMT_Movitlity', { timeOut: 5000 });
     }
   }
 }

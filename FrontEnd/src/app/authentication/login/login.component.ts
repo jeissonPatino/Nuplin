@@ -77,12 +77,12 @@ constructor(
   async Submit() {
     this.disabled = "btn-loading";
     if (!this.validateForm(this.loginForm.value.username, this.loginForm.value.password)) {
-      this.toastr.error('Uppps', 'NuplinTv', { timeOut: 3000, positionClass: 'toast-top-right' });
+      this.toastr.error('Uppps', 'CMT_Movitlity', { timeOut: 3000, positionClass: 'toast-top-right' });
       return;
     }
     await this.verifyRecaptcha();
     if (!this.recaptchaToken) {
-      this.toastr.error('Error con reCAPTCHA, intenta nuevamente', 'NuplinTv', { timeOut: 3000 });
+      this.toastr.error('Error con reCAPTCHA, intenta nuevamente', 'CMT_Movitlity', { timeOut: 3000 });
       return;
     }
     const loginResult = await this.validatinUser(this.loginForm);
@@ -91,7 +91,7 @@ constructor(
         queryParams: { contexto: 'login', email: this.loginForm.value.username, token: loginResult.token }
       });
     } else {
-      this.toastr.error('Las credenciales ingresadas no son correctas', 'NuplinTv', { timeOut: 5000 });
+      this.toastr.error('Las credenciales ingresadas no son correctas', 'CMT_Movitlity', { timeOut: 5000 });
     }
   }
 

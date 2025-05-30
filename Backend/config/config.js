@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const connection = mysql.createConnection({
   
-  host: '192.168.141.111', // Reemplaza con la IP del otro PC
+  host: '192.168.80.22', // Reemplaza con la IP del otro PC
   user: 'developer',     // Reemplaza con el usuario que creaste
   password: 'Jp.1023000929.1',         // Reemplaza con la contraseña
   database: 'developer' // Reemplaza con el nombre de tu base de datos
